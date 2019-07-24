@@ -11,19 +11,14 @@
 #' @return a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)
 #' in \code{freqLo} and \code{freqHi}
 #' @examples
-#' \dontrun{
-#' # NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
 #'
-#' # Create a temporary directory for the rain files
-#' dir.create(tmp <- tempfile("rainBR_", tmpdir = getwd()))
-#' # Download the brazil rain data - 100 wav files known to be hard rain and get filenames
-#' download.file(url = , destfile = tmp)
-#' wav.fn <- list.files(path = tmp, pattern = "\\.wav$")
+#' # Get filenames of training data (known rain recordings in wav files). Only five files are used here for purposes
+#' of this example
+#' train.fn <- system.file("extdata/rain", package = "hardRain")
 #'
 #' # Calculate the threshold using default settings - for two frequency bands
-#' trBR <- getThreshold(wav.fn, fn = "spec")
+#' trBR <- getThreshold(train.fn, fn = "spec")
 #' trBR
-#' }
 
 
 getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), fn = c("meanspec", "spec"), parallel = F){

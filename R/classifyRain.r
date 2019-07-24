@@ -1,6 +1,8 @@
 #' @export
 
-#' @title Classify wav files as having rain or not using thresholds from getThresholds()
+#' @title Classify audio files for presence/absence of rain
+#' @decription Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
+#' presence of rain using a minimum or quartile based threshold.
 #' @inheritParams getMetrics
 #' @param threshold threshold method (one of "min" or "Q2") - see details
 #' @param ID vector of IDs (character or factor) for each wav file identifying rain status,

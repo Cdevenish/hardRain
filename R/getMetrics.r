@@ -15,7 +15,7 @@
 #' @return a numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
 #' @examples
-#' see \code{\link{getThreshold}}, \code{\link{classifyRain}}
+#' see examples in getThreshold() and classifyRain
 
 
 getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
