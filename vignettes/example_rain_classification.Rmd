@@ -47,8 +47,8 @@ test.MCR <- list.files(path = tmp1, pattern = "MCR.*test.*\\.wav$")
 Calculate the threshold using default settings - for two frequency bands
 ```{r}
 
-devtools::install_github("https://github.com/Cdevenish/hardRain")
-library(hardRain)
+# devtools::install_github("https://github.com/Cdevenish/hardRain")
+# library(hardRain)
 
 trBR <- getThreshold(train.BR, fn = "spec")
 trBR
