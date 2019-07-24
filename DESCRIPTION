@@ -6,19 +6,19 @@ Authors@R: c(
     person(given = "Oliver",
            family = "Metcalf",
            role = c("aut", "cre"),
-           email = "first.last@example.com"),
+           email = "O.Metcalf@mmu.ac.uk"),
     person(given = "Christian",
            family = "Devenish",
            role = c("aut"),
            email = "c.devenish@mmu.ac.uk"))
-Maintainer: The package maintainer <yourself@somewhere.net>
-URL: https://github.com/etc
+Maintainer: The package maintainer <O.Metcalf@mmu.ac.uk>
+URL: https://github.com/Cdevenish/hardRain
 BugReports:
 Depends: R
 Imports: seewave, tuneR
 Suggests: fftw
-Description: rainR automatically detects rain events within sound files, e.g. wildlife recordings by using thresholds etc.c
-License: GPL-3
+Description: rainR detects rain events in audio files, e.g. wildlife recordings
+License: GPL-3.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
