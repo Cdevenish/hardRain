@@ -30,5 +30,4 @@ be called directly.
 }
 \examples{
 see \\code{\\link{getThreshold}}, \\code{\\link{classifyRain}}
-
 }

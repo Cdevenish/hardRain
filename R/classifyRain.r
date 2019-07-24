@@ -8,32 +8,22 @@
 #' @return a dataframe with the following columns: filename (of wav files), ID (if provided),
 #' logical columns with results of each threshold classification
 #' @examples
-#'
-#' \dontrun{
-#' # NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
-#'
-#' # Create a temporary directory for the rain files
-#' dir.create(tmp1 <- tempfile("rainBR_", tmpdir = getwd()))
-#' # Download the brazil rain data - 100 wav files known to be hard rain and get filenames
-#' download.file(url = xxx, destfile = tmp1)
-#' train.fn <- list.files(path = tmp1, pattern = "\\.wav$")
+#' # Get filenames of training data (known rain recordings in wav files). Only five files are used here for purposes
+#' of this example
+#' train.fn <- system.file("extdata/rain", package = "hardRain")
 #'
 #' # Calculate the threshold using default settings - for two frequency bands
 #' trBR <- getThreshold(train.fn, fn = "spec")
 #' trBR
 #'
-#' # Create a temporary directory for the test files
-#' dir.create(tmp2 <- tempfile("testBR_", tmpdir = getwd()))
-#' # Download the brazil test data - 100 wav files (50 rain, 50 non-rain) and get filenames
-#' download.file(url = xxx, destfile = tmp2)
-#' test.fn <- list.files(path = tmp2, pattern = "\\.wav$")
+#' # Get the test filenames (10 wav files with rain / non-rain)
+#' test.fn <- system.file("extdata/test", package = "hardRain")
 #'
 #' # Classify the test files using the thresholds obtained above
 #' resBR <- classifyRain(test.fn, t.values = trBR, fn = "spec", threshold = "min")
 #'
 #' # How many files identified as rain/non-rain?
 #' ## table(resBR)
-#' }
 
 classifyRain <- function(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL, parallel = F){
 

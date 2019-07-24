@@ -2,8 +2,7 @@
 % Please edit documentation in R/getThreshold.r
 \name{getThreshold}
 \alias{getThreshold}
-\title{Calculate minimum and 2nd quartile thresholds for rain detection in audio files
-#'}
+\title{Calculate minimum and 2nd quartile thresholds for rain detection in audio files}
 \usage{
 getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
   fn = c("meanspec", "spec"), parallel = F)
@@ -25,7 +24,6 @@ in \code{freqLo} and \code{freqHi}
 }
 \description{
 Calculate minimum and 2nd quartile thresholds for rain detection in audio files
-#'
 }
 \examples{
 \dontrun{
