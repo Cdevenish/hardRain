@@ -1,25 +1,30 @@
 
-#'@export
+#' @export
 
-#' @title Get thresholds for rain detection
+#' @title Get psd and signal to noise ratio for audio files
+#' @description This function does not generally need to be called directly. It is the workhorse function that
+#' reads wav files, extracts psd and signal to noise for specified frequency bands using seewave
+#' functions spec() or meanspec(). This is called by getThreshold() and classifyRain() which will generally
+#' be called directly.
 #'
 #' @param wav A vector of wav filenames (including directories)
 #' @param freqLo a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
 #' @param freqHi a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param fn uses spec or meanspec function (seewave package) to ...
-#' @param threshold threshold method (one of "min" or "IQR" - see details). If missing no threshold is produced
-#' @param ID vector of IDs (character or factor) for each wav file, e.g. rain or non-rain (optional)
-#' @param parallel Logical. Whether to use multicore processing with parallel package
-#' @return a list with vectors of \code{psd} and \code{s2n} for each wav file in \code{wav}
-#' @examples
+#' @param fn a character vector, which seewave function to use: spec or meanspec (see details)
+#' @param parallel Logical. Whether to use multicore processing with the parallel package (must be loaded)
+#' @return a numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
+#' filenames are conserved in the rownames
+#' @examples see \code{\link{getThreshold}}, \code{\link{classifyRain}}
 #'
 
 
 getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
                        fn = c("meanspec", "spec"), parallel = F){
 
-  library(seewave)
-  library(tuneR)
+  # These are in dependencies, so don't need to be here for final package functions
+  # library(seewave)
+  # library(tuneR)
+
 
   if(length(wav) == 0 | is.null(wav)) stop("wav filenames input does not exit")
 
@@ -44,19 +49,19 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
 
   if(parallel){
 
-    library(parallel)
+    # library(parallel) # in base R.. so ok just to ::
 
-    noCores <- detectCores() - 1
-    cl <- makeCluster(noCores)
+    noCores <- parallel::detectCores() - 1
+    cl <- parallel::makeCluster(noCores)
 
-    clusterExport(cl, c("wav", "fn", "fftw", "freqLo", "freqHi"), envir = environment())
-    clusterEvalQ(cl, {
+    parallel::clusterExport(cl, c("wav", "fn", "fftw", "freqLo", "freqHi"), envir = environment())
+    parallel::clusterEvalQ(cl, {
       library(seewave)
       library(tuneR)
     }
     )
 
-    mfs.lst <- parLapply(cl, wav, function(x) {
+    mfs.lst <- parallel::parLapply(cl, wav, function(x) {
 
       b <- tuneR::readWave(x) # read in audiofile
       f <- as.numeric(b@samp.rate)
@@ -73,7 +78,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
 
     })
 
-    stopCluster(cl)
+    parallel::stopCluster(cl)
 
   } else {
 

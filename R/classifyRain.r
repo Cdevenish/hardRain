@@ -1,17 +1,39 @@
-#'@export
+#' @export
 
-#' @title Classify wav data according to thresholds for rain detection
-#'
-#' @param wav A vector of wav filenames (including directories) OR the output of getMetrics (a matrix)
-#' @param freqLo a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param freqHi a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param fn uses spec or meanspec function (seewave package)
-#' @param threshold threshold method (one of "min" or "Q2" - see details)
-#' @param ID vector of IDs (character or factor) for each wav file, e.g. rain or non-rain (optional)
-#' @param parallel Logical. Whether to use multicore processing with parallel package
-#' @return a dataframe with columns for filename of wav file, ID (if provided), results of threshold(s) classification
+#' @title Classify wav files as having rain or not using thresholds from getThresholds()
+#' @inheritParams getMetrics
+#' @param threshold threshold method (one of "min" or "Q2") - see details
+#' @param ID vector of IDs (character or factor) for each wav file identifying rain status,
+#' e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.
+#' @return a dataframe with the following columns: filename (of wav files), ID (if provided),
+#' logical columns with results of each threshold classification
 #' @examples
 #'
+#' #' \dontrun{
+#' # NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
+#'
+#' # Create a temporary directory for the rain files
+#' dir.create(tmp1 <- tempfile("rainBR_", tmpdir = getwd()))
+#' # Download the brazil rain data - 100 wav files known to be hard rain and get filenames
+#' download.file(url = xxx, destfile = tmp1)
+#' train.fn <- list.files(path = tmp1, pattern = "\\.wav$")
+#'
+#' # Calculate the threshold using default settings - for two frequency bands
+#' trBR <- getThreshold(train.fn, fn = "spec")
+#' trBR
+#'
+#' # Create a temporary directory for the test files
+#' dir.create(tmp2 <- tempfile("testBR_", tmpdir = getwd()))
+#' # Download the brazil test data - 100 wav files (50 rain, 50 non-rain) and get filenames
+#' download.file(url = xxx, destfile = tmp2)
+#' test.fn <- list.files(path = tmp2, pattern = "\\.wav$")
+#'
+#' # Classify the test files using the thresholds obtained above
+#' resBR <- classifyRain(test.fn, t.values = trBR, fn = "spec", threshold = "min")
+#'
+#' # How many files identified as rain/non-rain?
+#' ## table(resBR)
+#' }
 
 classifyRain <- function(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
                          fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL, parallel = F){

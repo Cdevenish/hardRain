@@ -1,18 +1,30 @@
 
-#'@export
+#' @export
 
-#' @title Get thresholds for rain detection
-#'
+#' @title Calculate minimum and 2nd quartile thresholds for rain detection in audio files
+#' #'
 #' @param wav A vector of wav filenames (including directories)
 #' @param freqLo a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
 #' @param freqHi a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param fn uses spec or meanspec function (seewave package) to ...
-#' @param threshold threshold method (one of "min" or "IQR" - see details). If missing no threshold is produced
-#' @param ID vector of IDs (character or factor) for each wav file, e.g. rain or non-rain (optional)
-#' @param parallel Logical. Whether to use multicore processing with parallel package
-#' @return a list with vectors of \code{psd} and \code{s2n} for each wav file in \code{wav}
-#' @examples
+#' @param fn a character vector, which seewave function to use: spec or meanspec (see details)
+#' @param parallel Logical. Whether to use multicore processing with the parallel package (must be loaded)
 #'
+#' @return a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)
+#' in \code{freqLo} and \code{freqHi}
+#' @examples
+#' \dontrun{
+#' # NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
+#'
+#' # Create a temporary directory for the rain files
+#' dir.create(tmp <- tempfile("rainBR_", tmpdir = getwd()))
+#' # Download the brazil rain data - 100 wav files known to be hard rain and get filenames
+#' download.file(url = , destfile = tmp)
+#' wav.fn <- list.files(path = tmp, pattern = "\\.wav$")
+#'
+#' # Calculate the threshold using default settings - for two frequency bands
+#' trBR <- getThreshold(wav.fn, fn = "spec")
+#' trBR
+#' }
 
 
 getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
