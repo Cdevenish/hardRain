@@ -9,7 +9,7 @@
 #' logical columns with results of each threshold classification
 #' @examples
 #'
-#' #' \dontrun{
+#' \dontrun{
 #' # NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
 #'
 #' # Create a temporary directory for the rain files
@@ -35,8 +35,7 @@
 #' ## table(resBR)
 #' }
 
-classifyRain <- function(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
-                         fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL, parallel = F){
+classifyRain <- function(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL, parallel = F){
 
 
   if(mode(wav) == "character" & is.vector(wav)){

@@ -14,8 +14,8 @@
 #' @param parallel Logical. Whether to use multicore processing with the parallel package (must be loaded)
 #' @return a numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
-#' @examples see \code{\link{getThreshold}}, \code{\link{classifyRain}}
-#'
+#' @examples
+#' see \code{\link{getThreshold}}, \code{\link{classifyRain}}
 
 
 getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),

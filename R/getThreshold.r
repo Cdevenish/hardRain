@@ -2,7 +2,6 @@
 #' @export
 
 #' @title Calculate minimum and 2nd quartile thresholds for rain detection in audio files
-#' #'
 #' @param wav A vector of wav filenames (including directories)
 #' @param freqLo a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
 #' @param freqHi a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
@@ -27,8 +26,7 @@
 #' }
 
 
-getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
-                         fn = c("meanspec", "spec"), parallel = F){
+getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), fn = c("meanspec", "spec"), parallel = F){
 
 
   if(mode(wav) == "character" & is.vector(wav)){
