@@ -1,0 +1,95 @@
+---
+title: "Rain classification example"
+author: "C Devenish & O Metcalfe"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{example_rain_classification}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(hardRain)
+```
+
+
+# 1. Obtain wav filenames
+
+NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
+
+Create temporary directories for the rain and test files
+```{r}
+dir.create(tmp1 <- tempfile("rainBR_", tmpdir = getwd()))
+dir.create(tmp2 <- tempfile("testBR_", tmpdir = getwd()))
+```
+
+Download the rain and test data:
+* rain data: 100 wav files known to be hard rain
+* test data: 100 wav files (50 rain, 50 non-rain) 
+
+```{r}
+download.file(url = xxx, destfile = tmp1)
+ 
+# get the filenames (using regular expressions to differentiate the filenames)
+train.BR  <- list.files(path = tmp1, pattern = "BR.*rain.*\\.wav$")
+train.MCR <- list.files(path = tmp1, pattern = "MCR.*rain.*\\.wav$")
+test.BR <- list.files(path = tmp1, pattern = "BR.*test.*\\.wav$")
+test.MCR <- list.files(path = tmp1, pattern = "MCR.*test.*\\.wav$")
+```
+
+Calculate the threshold using default settings - for two frequency bands
+```{r}
+
+devtools::install_github("https://github.com/Cdevenish/hardRain")
+library(hardRain)
+
+trBR <- getThreshold(train.BR, fn = "spec")
+trBR
+
+trMCR <- getThreshold(train.MCR, fn = "spec")
+trMCR
+```
+
+
+Inspect the PSD and signal to noise values for rain and non-rain files at specific frequency bands
+
+```{r}
+metBR <- getMetrics(test.BR, fn = "spec")
+metMCR <- getMetrics(test.MCR, fn = "spec")
+
+# bind into a data frame and add location
+psd_s2n <- data.frame(filename = c(rownames(metBR), rownames(metMCR)), 
+                      rbind(metBR, metMCR), 
+                      loc = c(rep("BR", length(test.BR)), rep("MCR", length(test.MCR))))
+
+# add test status
+psd_s2n$rain <- ifelse(grepl("rain", psd_s2n$filename), TRUE, FALSE)
+
+# Draw a boxplot to see separation between rain and non-rain for each metric
+
+boxplot(psd ~ rain + loc, data = psd_s2n)
+boxplot(s2n ~ rain + loc, data = psd_s2n)
+
+## Or with ggplot
+
+
+```
+
+
+Classify the test files using the thresholds obtained above
+
+```{r}
+resBR <- classifyRain(test.BR, t.values = trBR, fn = "spec", threshold = "min")
+resMCR <- classifyRain(test.MCR, t.values = trMCR, fn = "spec", threshold = "min")
+
+# How many files identified as rain/non-rain?
+# table(resBR)
+```
+
