@@ -29,5 +29,5 @@ functions spec() or meanspec(). This is called by getThreshold() and classifyRai
 be called directly.
 }
 \examples{
-see \\code{\\link{getThreshold}}, \\code{\\link{classifyRain}}
+see examples in getThreshold() and \\link{classifyRain}
 }

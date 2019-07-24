@@ -1,31 +1,38 @@
-#' @export
-
 #' @title Classify audio files for presence/absence of rain
-#' @decription Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
+#'
+#' Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
 #' presence of rain using a minimum or quartile based threshold.
+#'
+#' This function is based on rain classification techniques in Bedoya... Metcalfe et al... thresholds are calculated
+#' using minimum psd and signal to noise ratio (mean/sd) etc...
+#'
 #' @inheritParams getMetrics
 #' @param threshold threshold method (one of "min" or "Q2") - see details
 #' @param ID vector of IDs (character or factor) for each wav file identifying rain status,
 #' e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.
 #' @return a dataframe with the following columns: filename (of wav files), ID (if provided),
 #' logical columns with results of each threshold classification
+#' @export
 #' @examples
-#' # Get filenames of training data (known rain recordings in wav files). Only five files are used here for purposes
-#' of this example
-#' train.fn <- system.file("extdata/rain", package = "hardRain")
+#' # Get filenames of training data (known rain recordings in wav files). Only five files are used
+#' # here for purposes of this example
+#'
+#' train.fn <- list.files(system.file("extdata/rain", package = "hardRain"), "\\.wav$", full.names = T)
 #'
 #' # Calculate the threshold using default settings - for two frequency bands
 #' trBR <- getThreshold(train.fn, fn = "spec")
 #' trBR
 #'
 #' # Get the test filenames (10 wav files with rain / non-rain)
-#' test.fn <- system.file("extdata/test", package = "hardRain")
+#' test.fn <- list.files(system.file("extdata/test", package = "hardRain"), "\\.wav$", full.names = T)
 #'
 #' # Classify the test files using the thresholds obtained above
-#' resBR <- classifyRain(test.fn, t.values = trBR, fn = "spec", threshold = "min")
+#' resBR <- classifyRain(test.fn, t.values = trBR, fn = "spec")
+#' head(resBR)
 #'
-#' # How many files identified as rain/non-rain?
-#' ## table(resBR)
+#' # How many files identified as rain/non-rain for each frequency band and threshold?
+#' lapply(split(resBR, list(resBR$band, resBR$threshold)), function(x) table(x[,"value"]))
+
 
 classifyRain <- function(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL, parallel = F){
 

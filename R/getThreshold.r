@@ -14,7 +14,7 @@
 #'
 #' # Get filenames of training data (known rain recordings in wav files). Only five files are used here for purposes
 #' of this example
-#' train.fn <- system.file("extdata/rain", package = "hardRain")
+#' train.fn <- list.files(system.file("extdata/rain", package = "hardRain"), "\\.wav$", full.names = T)
 #'
 #' # Calculate the threshold using default settings - for two frequency bands
 #' trBR <- getThreshold(train.fn, fn = "spec")
