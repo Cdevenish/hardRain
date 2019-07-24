@@ -1,9 +1,9 @@
 #' @title Classify audio files for presence/absence of rain
 #'
-#' Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
+#' @description Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
 #' presence of rain using a minimum or quartile based threshold.
 #'
-#' This function is based on rain classification techniques in Bedoya... Metcalfe et al... thresholds are calculated
+#' @details This function is based on rain classification techniques in Bedoya... Metcalfe et al... thresholds are calculated
 #' using minimum psd and signal to noise ratio (mean/sd) etc...
 #'
 #' @inheritParams getMetrics

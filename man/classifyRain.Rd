@@ -2,13 +2,7 @@
 % Please edit documentation in R/classifyRain.r
 \name{classifyRain}
 \alias{classifyRain}
-\title{Classify audio files for presence/absence of rain
-
-Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
-presence of rain using a minimum or quartile based threshold.
-
-This function is based on rain classification techniques in Bedoya... Metcalfe et al... thresholds are calculated
-using minimum psd and signal to noise ratio (mean/sd) etc...}
+\title{Classify audio files for presence/absence of rain}
 \usage{
 classifyRain(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
   fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL,
@@ -35,11 +29,10 @@ a dataframe with the following columns: filename (of wav files), ID (if provided
 logical columns with results of each threshold classification
 }
 \description{
-Classify audio files for presence/absence of rain
-
 Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
 presence of rain using a minimum or quartile based threshold.
-
+}
+\details{
 This function is based on rain classification techniques in Bedoya... Metcalfe et al... thresholds are calculated
 using minimum psd and signal to noise ratio (mean/sd) etc...
 }
