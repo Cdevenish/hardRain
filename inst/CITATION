@@ -1,0 +1,16 @@
+citHeader("To cite rainR in publications use:")
+
+citEntry(entry = "Article",
+  title        = "Automated detection of rain in audio recordings",
+  author       = personList(as.person("Oliver Metcalfe"),
+                   as.person("Christian Devenish")),
+  journal      = "",
+  year         = "2019",
+  volume       = "",
+  number       = "",
+  pages        = "",
+  url          = "",
+
+  textVersion  =
+  paste("")
+)
