@@ -1,21 +1,21 @@
 
 #' @export
 
-#' @title Get psd and signal to noise ratio for audio files
+#' @title Get PSD and Signal to Noise ratio for audio files
 #' @description This function does not generally need to be called directly. It is the workhorse function that
 #' reads wav files, extracts psd and signal to noise for specified frequency bands using seewave
 #' functions spec() or meanspec(). This function is called by getThreshold() and classifyRain() which will generally
 #' be used directly.
 #'
 #' @param wav A vector of wav filenames (including directories)
-#' @param freqLo a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param freqHi a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param fn a character vector, which seewave function to use: spec or meanspec (see details)
+#' @param freqLo A numeric vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
+#' @param freqHi A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
+#' @param fn A character vector, which seewave function to use: spec or meanspec (see details)
 #' @param parallel Logical. Whether to use multicore processing with the parallel package (must be loaded)
-#' @return a numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
+#' @return A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
 #' @examples
-#' see examples in getThreshold() and \code{\link{classifyRain}}
+#' See examples in getThreshold() and \code{\link{classifyRain}}
 
 
 getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),

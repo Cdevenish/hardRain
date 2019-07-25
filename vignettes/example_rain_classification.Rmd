@@ -93,3 +93,7 @@ resMCR <- classifyRain(test.MCR, t.values = trMCR, fn = "spec", threshold = "min
 # table(resBR)
 ```
 
+Accuracy metrics
+
+
+
