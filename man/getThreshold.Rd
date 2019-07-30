@@ -2,7 +2,7 @@
 % Please edit documentation in R/getThreshold.r
 \name{getThreshold}
 \alias{getThreshold}
-\title{Calculate minimum and 2nd quartile thresholds for rain detection in audio files}
+\title{Calculate thresholds for rain detection in audio files}
 \usage{
 getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
   parallel = F)
@@ -27,11 +27,13 @@ Calculate minimum and 2nd quartile thresholds for rain detection in audio files
 }
 \examples{
 
-# Get filenames of training data (known rain recordings in wav files). Only five files are used here for purposes
-of this example
+# Calculate thresholds using 5 files of training data (known rain recordings in wav files).
+# Only five files are used here for purposes of this example - but see recommendations in Metcalf et al...
+
+# Get filenames of training data
 train.fn <- list.files(system.file("extdata/rain", package = "hardRain"), "\\\\.wav$", full.names = T)
 
-# Calculate the threshold using default settings - for two frequency bands
+# Calculate the threshold using default settings
 trBR <- getThreshold(train.fn, fn = "spec")
 trBR
 }

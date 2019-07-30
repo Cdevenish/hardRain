@@ -22,7 +22,7 @@ to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
 longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 and do not need to be subdivided (see details)}
 
-\item{threshold}{threshold method (one of "min" or "Q2") - see details}
+\item{threshold}{threshold method ("min" or "Q2") default calculated both - see details}
 
 \item{ID}{vector of IDs (character or factor) for each wav file identifying rain status,
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
