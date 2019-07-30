@@ -84,7 +84,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       f <- as.numeric(b@samp.rate)
 
       # get wl from t.step (a few ms will probably be left unprocessed at end of each file with step)
-      if(!is.null(t.step)) wl <- t.step*f else wl <- duration(b)*f
+      if(!is.null(t.step)) wl <- t.step*f else wl <- seewave::duration(b)*f
       wl <- wl - wl%%2 # make sure it's even
 
       # get freq spectrum

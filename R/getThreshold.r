@@ -1,18 +1,21 @@
 
 #' @export
 
-#' @title Calculate minimum and 2nd quartile thresholds for rain detection in audio files
+#' @title Calculate thresholds for rain detection in audio files
+#' @description Calculate minimum and 2nd quartile thresholds for rain detection in audio files
 
 #' @inheritParams getMetrics
 #' @return a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)
 #' in \code{freqLo} and \code{freqHi}
 #' @examples
 #'
-#' # Get filenames of training data (known rain recordings in wav files). Only five files are used here for purposes
-#' of this example
+#' # Calculate thresholds using 5 files of training data (known rain recordings in wav files).
+#' # Only five files are used here for purposes of this example - but see recommendations in Metcalf et al...
+#'
+#' # Get filenames of training data
 #' train.fn <- list.files(system.file("extdata/rain", package = "hardRain"), "\\.wav$", full.names = T)
 #'
-#' # Calculate the threshold using default settings - for two frequency bands
+#' # Calculate the threshold using default settings
 #' trBR <- getThreshold(train.fn, fn = "spec")
 #' trBR
 
