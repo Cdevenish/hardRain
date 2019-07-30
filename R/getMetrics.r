@@ -8,18 +8,20 @@
 #' be used directly.
 #'
 #' @param wav A vector of wav filenames (including directories)
-#' @param freqLo A numeric vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
+#' @param freqLo A numeric vector of Lower frequency cut offs for each band - defaults
+#' to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
 #' @param freqHi A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param fn A character vector, which seewave function to use: spec or meanspec (see details)
-#' @param parallel Logical. Whether to use multicore processing with the parallel package (must be loaded)
+#' @param t.step NULL or a numeric vector giving time in seconds in which to divide
+#' longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
+#' and do not need to be subdivided (see details)
+#' @param parallel Logical. Whether to use multicore processing with the parallel package
+#' (must be loaded)
 #' @return A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
-#' @examples
-#' See examples in getThreshold() and \code{\link{classifyRain}}
+#' @examples See examples in getThreshold() and \code{\link{classifyRain}}
 
 
-getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
-                       fn = c("meanspec", "spec"), parallel = F){
+getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = NULL, parallel = F){
 
   # These are in dependencies, so don't need to be here for final package functions
   # library(seewave)
@@ -27,6 +29,15 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
 
 
   if(length(wav) == 0 | is.null(wav)) stop("wav filenames input does not exit")
+
+  if(!is.null(t.step)){
+
+    if(!is.numeric(t.step)) stop("t.step must be numeric - see details") else {
+
+      if(t.step > 60) warning("Long time divisions may not give sensible results, consider 20 s or less.")
+    }
+
+  }
 
 
   # check for presence of fftw package and use if present
@@ -45,8 +56,6 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
   # check that freqHi > freqLo
   if(!all(freqHi > freqLo)) stop("freqHi must be higher than freqLo pairwise")
 
-  fn <- match.arg(fn)
-
   if(parallel){
 
     # library(parallel) # in base R.. so ok just to ::
@@ -54,66 +63,53 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
     noCores <- parallel::detectCores() - 1
     cl <- parallel::makeCluster(noCores)
 
-    parallel::clusterExport(cl, c("wav", "fn", "fftw", "freqLo", "freqHi"), envir = environment())
+    parallel::clusterExport(cl, c("wav", "fftw", "freqLo", "freqHi"), envir = environment())
     parallel::clusterEvalQ(cl, {
       library(seewave)
       library(tuneR)
     }
     )
-
-    mfs.lst <- parallel::parLapply(cl, wav, function(x) {
-
-      b <- tuneR::readWave(x) # read in audiofile
-      f <- as.numeric(b@samp.rate)
-
-      #mean frequency spectrum # x is frequency (kHz); y is amplitude
-      mfs <- switch(fn,
-
-                    spec = seewave::spec(b, PSD=T, wn="rectangle", ovlp=0, fftw=fftw, plot=F, f=f),
-                    meanspec = seewave::meanspec(b, PSD=T, wn="rectangle", ovlp=0, fftw=fftw, plot=F, f=f)
-      )
-
-      # take psd scores for each rain frequency window in khz
-      mapply(function(lo,hi) mfs[mfs[,1] > lo & mfs[,1] < hi, 2], freqLo, freqHi, SIMPLIFY = F)
-
-    })
-
-    parallel::stopCluster(cl)
-
+    appFn <- parallel::parLapply
   } else {
 
-    pb <- txtProgressBar(min = 0, max = length(wav), style = 3)
+    appFn <- lapply
+    # pb <- txtProgressBar(min = 0, max = length(wav), style = 3) # length of all wavs?
+  }
 
-    mfs.lst <- lapply(wav, function(x) {
+    mfs.lst <- appFn(X = wav, FUN = function(x) {
 
-      setTxtProgressBar(pb, which(x == wav))
+      # if(parallel) setTxtProgressBar(pb, which(x == wav))
 
       b <- tuneR::readWave(x) # read in audiofile
       f <- as.numeric(b@samp.rate)
 
-      #mean frequency spectrum # x is frequency (kHz); y is amplitude
-      mfs <- switch(fn,
+      # get wl from t.step (a few ms will probably be left unprocessed at end of each file with step)
+      if(!is.null(t.step)) wl <- t.step*f else wl <- duration(b)*f
+      wl <- wl - wl%%2 # make sure it's even
 
-                spec = seewave::spec(b, PSD=T, wn="rectangle", ovlp=0, fftw=fftw, plot=F, f=f),
-                meanspec = seewave::meanspec(b, PSD=T, wn="rectangle", ovlp=0, fftw=fftw, plot=F, f=f)
-      )
-      #dim(mfs); head(mfs)
+      # get freq spectrum
+      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) # add , ...
+      # str(fs)
+      # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
+      # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)
 
       # take psd scores for each rain frequency window in khz
-      mapply(function(lo,hi) mfs[mfs[,1] > lo & mfs[,1] < hi, 2], freqLo, freqHi, SIMPLIFY = F)
-
+      mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
+             freqLo, freqHi, SIMPLIFY = F)
+      # str(tmp2)
     })
-    close(pb)
-  }
 
-  #str(mfs.lst, max.level = 2)
-  # return(mfs.lst)
+    #str(mfs.lst)
 
+    if(parallel) parallel::stopCluster(cl) # else close(pb)
+
+  # Get metrics here
   res <- lapply(mfs.lst, function(x) {
 
-    psd <- sapply(x, mean) # psd of filtered frequency window
-    s2n <- sapply(x, function(y) mean(y)/sd(y)) # sig2noise ratio
-    list(psd=psd, s2n=s2n)
+    psd <- sapply(x, colMeans) # psd of filtered frequency window
+    s2n <- sapply(x, function(y) apply(y, 2, function(z) mean(z)/sd(z))) # sig2noise ratio
+    list(psd=matrix(psd, ncol = length(freqLo)), s2n=matrix(s2n, ncol = length(freqLo)))
+    # above, make format consistent as matrix..  if slow, then use if(is.null(t.step))
 
   })
 
@@ -126,7 +122,14 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6),
   # head(res2)
   cNames <- apply(expand.grid("band", seq_along(freqLo), c("psd", "s2n"), KEEP.OUT.ATTRS = F),
                   1, paste0, collapse = ".")
-  dimnames(res2) <- list(basename(wav), cNames)
+  name.exp <- sapply(res, function(x) sapply(x, nrow)[1])
+  dimnames(res2) <- list(mapply(function(x,y) rep(x, each= y), basename(wav), name.exp), cNames)
+
+  if(!is.null(t.step)) {
+
+    duration <- lapply(mapply(function(x,y) rep(x, y), t.step, name.exp, SIMPLIFY = F), cumsum)
+    attributes(res2) <-  c(attributes(res2), t.step = t.step, duration = list(unlist(duration)))
+  }
   rm(tmp, cNames)
 
   return(res2)

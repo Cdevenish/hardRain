@@ -5,18 +5,18 @@
 \title{Calculate minimum and 2nd quartile thresholds for rain detection in audio files}
 \usage{
 getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
-  fn = c("meanspec", "spec"), parallel = F)
+  parallel = F)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories)}
 
-\item{freqLo}{a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqLo}{A numeric vector of Lower frequency cut offs for each band - defaults
+to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
 
-\item{freqHi}{a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqHi}{A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
 
-\item{fn}{a character vector, which seewave function to use: spec or meanspec (see details)}
-
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package (must be loaded)}
+\item{parallel}{Logical. Whether to use multicore processing with the parallel package
+(must be loaded)}
 }
 \value{
 a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)

@@ -4,25 +4,31 @@
 \alias{classifyRain}
 \title{Classify audio files for presence/absence of rain}
 \usage{
-classifyRain(wav, t.values, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
-  fn = c("meanspec", "spec"), threshold = c("min", "Q2"), ID = NULL,
+classifyRain(wav, thresh.vals, freqLo = c(0.6, 4.4), freqHi = c(1.2,
+  5.6), t.step = NULL, threshold = c("min", "Q2"), ID = NULL,
   parallel = F)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories)}
 
-\item{freqLo}{a vector of Lower frequency cut offs - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{thresh.vals}{A matrix or vector of thresholds obtained from \code{getThreshold}}
 
-\item{freqHi}{a vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqLo}{A numeric vector of Lower frequency cut offs for each band - defaults
+to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
 
-\item{fn}{a character vector, which seewave function to use: spec or meanspec (see details)}
+\item{freqHi}{A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
+
+\item{t.step}{NULL or a numeric vector giving time in seconds in which to divide
+longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
+and do not need to be subdivided (see details)}
 
 \item{threshold}{threshold method (one of "min" or "Q2") - see details}
 
 \item{ID}{vector of IDs (character or factor) for each wav file identifying rain status,
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package (must be loaded)}
+\item{parallel}{Logical. Whether to use multicore processing with the parallel package
+(must be loaded)}
 }
 \value{
 a dataframe with the following columns: filename (of wav files), ID (if provided),
@@ -50,9 +56,9 @@ trBR
 test.fn <- list.files(system.file("extdata/test", package = "hardRain"), "\\\\.wav$", full.names = T)
 
 # Classify the test files using the thresholds obtained above
-resBR <- classifyRain(test.fn, t.values = trBR, fn = "spec")
+resBR <- classifyRain(test.fn, thresh.vals = trBR, fn = "spec")
 head(resBR)
 
-# How many files identified as rain/non-rain for each frequency band and threshold?
-lapply(split(resBR, list(resBR$band, resBR$threshold)), function(x) table(x[,"value"]))
+# How many files identified as rain/non-rain for each threshold?
+lapply(split(resBR, list(resBR$threshold)), function(x) table(x[,"value"]))
 }
