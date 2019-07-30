@@ -19,7 +19,7 @@ to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
 longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 and do not need to be subdivided (see details)}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package
+\item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
 (must be loaded)}
 }
 \value{

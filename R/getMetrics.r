@@ -14,7 +14,7 @@
 #' @param t.step NULL or a numeric vector giving time in seconds in which to divide
 #' longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 #' and do not need to be subdivided (see details)
-#' @param parallel Logical. Whether to use multicore processing with the parallel package
+#' @param parallel Logical. Whether to use multicore processing with the parallel package (Windows only)
 #' (must be loaded)
 #' @return A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
@@ -63,24 +63,16 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     noCores <- parallel::detectCores() - 1
     cl <- parallel::makeCluster(noCores)
 
-    parallel::setDefaultCluster(cl) # register default to use parLapply like lapply
-
-    parallel::clusterExport(cl, c("wav", "fftw", "freqLo", "freqHi"), envir = environment())
+    parallel::clusterExport(cl, c("wav", "t.step", "fftw", "freqLo", "freqHi"), envir = environment())
     parallel::clusterEvalQ(cl, {
       library(seewave)
       library(tuneR)
     }
     )
-    appFn <- parallel::parLapply
-  } else {
+    # appFn <- parallel::parLapply
+    mfs.lst <- parallel::parLapply(cl, wav, function(x) {
 
-    appFn <- lapply
-    pb <- txtProgressBar(min = 0, max = length(wav), style = 3) # length of all wavs?
-  }
-
-    mfs.lst <- appFn(X = wav, FUN = function(x) {
-
-      if(parallel) setTxtProgressBar(pb, which(x == wav))
+      #if(!parallel) setTxtProgressBar(pb, which(x == wav))
 
       b <- tuneR::readWave(x) # read in audiofile
       f <- as.numeric(b@samp.rate)
@@ -101,9 +93,42 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       # str(tmp2)
     })
 
-    #str(mfs.lst)
+    parallel::stopCluster(cl)
 
-    if(parallel) parallel::stopCluster(cl) else close(pb)
+
+
+  } else {
+
+    # appFn <- lapply
+    pb <- txtProgressBar(min = 0, max = length(wav), style = 3) # length of all wavs?
+
+    mfs.lst <- lapply(wav, function(x) {
+
+      setTxtProgressBar(pb, which(x == wav))
+
+      b <- tuneR::readWave(x) # read in audiofile
+      f <- as.numeric(b@samp.rate)
+
+      # get wl from t.step (a few ms will probably be left unprocessed at end of each file with step)
+      if(!is.null(t.step)) wl <- t.step*f else wl <- seewave::duration(b)*f
+      wl <- wl - wl%%2 # make sure it's even
+
+      # get freq spectrum
+      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) # add , ...
+      # str(fs)
+      # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
+      # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)
+
+      # take psd scores for each rain frequency window in khz
+      mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
+             freqLo, freqHi, SIMPLIFY = F)
+      # str(tmp2)
+    })
+
+    close(pb)
+    }
+
+
 
   # Get metrics here
   res <- lapply(mfs.lst, function(x) {

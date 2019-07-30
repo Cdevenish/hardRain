@@ -15,7 +15,7 @@ to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
 
 \item{freqHi}{A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package
+\item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
 (must be loaded)}
 }
 \value{

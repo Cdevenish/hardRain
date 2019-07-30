@@ -27,7 +27,7 @@ and do not need to be subdivided (see details)}
 \item{ID}{vector of IDs (character or factor) for each wav file identifying rain status,
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package
+\item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
 (must be loaded)}
 }
 \value{
