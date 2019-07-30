@@ -49,14 +49,14 @@ using minimum psd and signal to noise ratio (mean/sd) etc...
 train.fn <- list.files(system.file("extdata/rain", package = "hardRain"), "\\\\.wav$", full.names = T)
 
 # Calculate the threshold using default settings - for two frequency bands
-trBR <- getThreshold(train.fn, fn = "spec")
+trBR <- getThreshold(train.fn)
 trBR
 
 # Get the test filenames (10 wav files with rain / non-rain)
 test.fn <- list.files(system.file("extdata/test", package = "hardRain"), "\\\\.wav$", full.names = T)
 
 # Classify the test files using the thresholds obtained above
-resBR <- classifyRain(test.fn, thresh.vals = trBR, fn = "spec")
+resBR <- classifyRain(test.fn, thresh.vals = trBR)
 head(resBR)
 
 # How many files identified as rain/non-rain for each threshold?

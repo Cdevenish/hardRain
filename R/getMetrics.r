@@ -63,6 +63,8 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     noCores <- parallel::detectCores() - 1
     cl <- parallel::makeCluster(noCores)
 
+    parallel::setDefaultCluster(cl) # register default to use parLapply like lapply
+
     parallel::clusterExport(cl, c("wav", "fftw", "freqLo", "freqHi"), envir = environment())
     parallel::clusterEvalQ(cl, {
       library(seewave)
@@ -73,12 +75,12 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   } else {
 
     appFn <- lapply
-    # pb <- txtProgressBar(min = 0, max = length(wav), style = 3) # length of all wavs?
+    pb <- txtProgressBar(min = 0, max = length(wav), style = 3) # length of all wavs?
   }
 
     mfs.lst <- appFn(X = wav, FUN = function(x) {
 
-      # if(parallel) setTxtProgressBar(pb, which(x == wav))
+      if(parallel) setTxtProgressBar(pb, which(x == wav))
 
       b <- tuneR::readWave(x) # read in audiofile
       f <- as.numeric(b@samp.rate)
@@ -101,7 +103,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
     #str(mfs.lst)
 
-    if(parallel) parallel::stopCluster(cl) # else close(pb)
+    if(parallel) parallel::stopCluster(cl) else close(pb)
 
   # Get metrics here
   res <- lapply(mfs.lst, function(x) {
