@@ -1,9 +1,9 @@
 
 #' @export
 
-#' @title Get PSD and Signal to Noise ratio for audio files
+#' @title Get PSD and Signal-to-Noise Ratio for audio files
 #' @description This function does not generally need to be called directly. It is the workhorse function that
-#' reads wav files, extracts psd and signal to noise for specified frequency bands using seewave
+#' reads wav files, extracts PSD and Signal-to-Noise for specified frequency bands using seewave
 #' functions spec() or meanspec(). This function is called by getThreshold() and classifyRain() which will generally
 #' be used directly.
 #'

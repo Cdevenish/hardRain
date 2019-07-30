@@ -12,7 +12,8 @@
 #' @param ID vector of IDs (character or factor) for each wav file identifying rain status,
 #' e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.
 #' @return a dataframe with the following columns: filename (of wav files), ID (if provided),
-#' logical columns with results of each threshold classification
+#' logical columns with results of each threshold classification. If t.step is not NULL, its value is
+#' included in the data frame attributes
 #' @export
 #' @examples
 #' # Get filenames of training data (known rain recordings in wav files). Only five files are used
@@ -107,10 +108,12 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
 
   if("t.step" %in% names(attributes(tmp))){
 
-    # add time column
-    res4$t.step <- attr(tmp, "duration")
+    # add time column - probably should just add this column in the metrics function...
+    tmp2 <- data.frame(filename = f.names, t.step = attr(tmp, "duration"))
+    res4 <- merge(res4, tmp2, by = "filename", sort = F)
     res4 <- res4[order(res4$filename, res4$threshold, res4$t.step),]
     rownames(res4) <- NULL
+    attributes(res4) <- c(attributes(res4), t.step = t.step)
   }
 
   return(res4)
