@@ -19,17 +19,28 @@ cutRain(x, threshold = c("min", "Q2"), outF, inF, start, label,
 \item{start}{Optional. A vector of dateTime objects giving the start time for each file in class.results}
 
 \item{label}{Optional. A character vector, either "audacity" or "raven", to include a label file to
-be written in \code{outF} for the original wav, labelling all non-rain sections (ie those that will be exported)}
+be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)}
+
+\item{label.only}{Logical. If TRUE, only label file is written, wav files are not cut and saved.}
 }
 \value{
-A dataframe detailing the new wav files created, with, file path, start and end times
-logical columns with results of each threshold classification
+A dataframe (invisibly) detailing the new wav files created, with, filename, full path,
+start times (optionally)
 }
 \description{
-Using results from the \code{classifyRain} function, input wav files will be cut and saved according to classification results. Contiguous snippets of non-rain will be saved as new wav files
+Using results from \code{classifyRain}, input wav files/segments containing rain are cut and
+remaining contiguous snippets of non-rain are saved as new wav files
 }
 \details{
-This function will take results from \code{classifyRain} and join together contiguous snippets (in snippets of lengths given in the t.step argument).
+This function is only designed to work with results from \code{classifyRain} where input audio files
+are subdivided into smaller time segments with \code{t.step} argument. If \code{label.only} is \code{FALSE},
+then segments containing rain will be cut from original audio files, and remaining contiguous audio
+saved as new wav files. Optionally, a label file for the original wav can be written to the input folder,
+marking segments with rain/clear in the wav file (either for Audacity or Raven software).
+
+If a vector of start times and dates (as POSIX* format) is given in \code{start}, then filenames will be
+suffixed with new start times. Otherwise, new wav files are suffixed with a numeric ID for each separate
+segment originating from the input wav file.
 }
 \examples{
 
