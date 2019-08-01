@@ -138,7 +138,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       wl <- wl - wl%%2 # make sure it's even
 
       # get freq spectrum
-      fs <- seewave::spectro(b, wl=wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) #, ...  wl = 512 default
+      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) #, ...  wl = 512 default
       # str(fs)
       # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
       # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)
