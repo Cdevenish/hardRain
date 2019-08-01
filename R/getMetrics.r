@@ -4,7 +4,7 @@
 #' @title Get PSD and Signal-to-Noise Ratio for audio files
 #' @description This function does not generally need to be called directly. It is the workhorse function that
 #' reads wav files, extracts PSD and Signal-to-Noise for specified frequency bands using seewave
-#' functions spec() or meanspec(). This function is called by getThreshold() and classifyRain() which will generally
+#' function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will generally
 #' be used directly.
 #'
 #' @param wav A vector of wav filenames (including directories)
@@ -70,6 +70,25 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     }
     )
     # appFn <- parallel::parLapply
+
+    ## do a burn in? not sure this helps, but second time around often seems quicker... is there some caching going
+    ## on somewhere?
+
+    if(burnIn){
+      mfs.tmp <- parallel::parLapply(cl, wav[1], function(x) {
+
+        b <- tuneR::readWave(x, header = T) # read in audiofile
+        if(b$samples/b$sample.rate > 15) to <- 10 else to <- floor(b$samples/b$sample.rate)
+        b <- tuneR::readWave(x, from = 1, to = to, units = "seconds") # read in audiofile
+        f <- as.numeric(b@samp.rate)
+        # get freq spectrum
+        fs <- seewave::spectro(b, wl = 512, wn="rectangle", fftw=fftw, plot=F, dB = NULL) #
+        # str(fs)
+
+      })
+      rm(mfs.tmp)
+    }
+
     mfs.lst <- parallel::parLapply(cl, wav, function(x) {
 
       #if(!parallel) setTxtProgressBar(pb, which(x == wav))
@@ -82,7 +101,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       wl <- wl - wl%%2 # make sure it's even
 
       # get freq spectrum
-      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) # add , ...
+      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL, ...) # add , ...
       # str(fs)
       # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
       # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)

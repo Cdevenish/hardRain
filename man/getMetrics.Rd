@@ -2,7 +2,7 @@
 % Please edit documentation in R/getMetrics.r
 \name{getMetrics}
 \alias{getMetrics}
-\title{Get PSD and Signal to Noise ratio for audio files}
+\title{Get PSD and Signal-to-Noise Ratio for audio files}
 \usage{
 getMetrics(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
   t.step = NULL, parallel = F)
@@ -28,8 +28,8 @@ filenames are conserved in the rownames
 }
 \description{
 This function does not generally need to be called directly. It is the workhorse function that
-reads wav files, extracts psd and signal to noise for specified frequency bands using seewave
-functions spec() or meanspec(). This function is called by getThreshold() and classifyRain() which will generally
+reads wav files, extracts PSD and Signal-to-Noise for specified frequency bands using seewave
+function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will generally
 be used directly.
 }
 \examples{

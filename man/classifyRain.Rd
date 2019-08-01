@@ -32,7 +32,8 @@ e.g. rain or non-rain (optional). This can be used for testing and calculating a
 }
 \value{
 a dataframe with the following columns: filename (of wav files), ID (if provided),
-logical columns with results of each threshold classification
+logical columns with results of each threshold classification. If t.step is not NULL, its value is
+included in the data frame attributes
 }
 \description{
 Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for

@@ -43,12 +43,12 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
 
   if(mode(wav) == "character" & is.vector(wav)){
     tmp <- getMetrics(wav, freqLo=freqLo, freqHi=freqHi, t.step = t.step, parallel = parallel)
-    f.names <- basename(wav)
     } else {if(class(wav) == "matrix") {
       tmp <- wav
-      f.names <- rownames(wav)
       } else stop("If wav is not vector of filenames, it should be a matrix - output of getMetrics()")
     }
+
+  f.names <- unname(rownames(tmp))
 
   # check names on threshold type...
   if(!all(colnames(tmp) == colnames(thresh.vals))) stop("Threshold column names do not match data")
@@ -86,33 +86,43 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
     f.names <- rep(f.names, noBands)
     threshMethod <- rep(x, noBands*nrow(tmp))
 
-    if(is.null(ID)) {data.frame(filename = f.names,
+    if(is.null(ID)) {tmp2 <- data.frame(filename = f.names,
                                 threshold = threshMethod,
                                 bands, stringsAsFactors = F)} else {
 
-                      data.frame(filename = f.names,
+                      tmp2 <- data.frame(filename = f.names,
                                  threshold = x,
                                  bands,
                                  ID = rep(ID, noBands), stringsAsFactors = F)
                                 }
+    # add duration column
+    # probably should just add this column in the getMetrics function...
+    if("t.step" %in% names(attributes(tmp))){
+
+      dur.names <- rep(attr(tmp, "duration"), noBands)
+      tmp2 <- cbind(tmp2, duration = dur.names)
+    }
+
+    tmp2
+
   }
     )
 
   res3 <- do.call(rbind, res2)
 
   ## return just band1 + band2 results
-  res4 <- subset(res3, band == "band2")
-  res4$band <- NULL
+  if(noBands == 2){
+    res4 <- subset(res3, band == "band2")
+    res4$band <- NULL
+    rownames(res4) <- NULL
+  } else res4 <- res3
+  # res4
 
   # for both band results separately, substitute res3 for res4 below (when adding t.step column)
+  ## get rid of multiple band options and simplify all this...
 
   if("t.step" %in% names(attributes(tmp))){
-
-    # add time column - probably should just add this column in the metrics function...
-    tmp2 <- data.frame(filename = f.names, t.step = attr(tmp, "duration"))
-    res4 <- merge(res4, tmp2, by = "filename", sort = F)
-    res4 <- res4[order(res4$filename, res4$threshold, res4$t.step),]
-    rownames(res4) <- NULL
+    res4 <- res4[order(res4$filename, res4$threshold, res4$duration),]
     attributes(res4) <- c(attributes(res4), t.step = t.step)
   }
 
