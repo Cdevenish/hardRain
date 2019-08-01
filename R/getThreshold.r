@@ -5,6 +5,8 @@
 #' @description Calculate minimum and 2nd quartile thresholds for rain detection in audio files
 
 #' @inheritParams getMetrics
+#' @param wav A vector of wav filenames (including directories) of known rain recordings. Or, the output matrix from
+#' \code{getMetrics} function.
 #' @return a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)
 #' in \code{freqLo} and \code{freqHi}
 #' @examples
@@ -26,7 +28,7 @@ getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), paralle
   if(mode(wav) == "character" & is.vector(wav)){
     tmp <- getMetrics(wav, freqLo=freqLo, freqHi=freqHi, parallel = parallel)
   } else {
-    if(class(wav) == "matrix") tmp <- wav else {
+    if(class(wav) == "matrix") tmp <- wav else { #  & grepl("psd|s2n", colnames(wav)) # FINISH CHECKS
       stop("If wav is not vector of filenames, it should be a matrix - output of getMetrics()")
       }
   }

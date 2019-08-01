@@ -8,7 +8,8 @@ getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
   parallel = F)
 }
 \arguments{
-\item{wav}{A vector of wav filenames (including directories)}
+\item{wav}{A vector of wav filenames (including directories) of known rain recordings. Or, the output matrix from
+\code{getMetrics} function.}
 
 \item{freqLo}{A numeric vector of Lower frequency cut offs for each band - defaults
 to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}

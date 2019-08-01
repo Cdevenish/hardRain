@@ -74,20 +74,23 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     ## do a burn in? not sure this helps, but second time around often seems quicker... is there some caching going
     ## on somewhere?
 
-    if(burnIn){
-      mfs.tmp <- parallel::parLapply(cl, wav[1], function(x) {
+    # if(burnIn){
+    #   print("Doing burn in...")
+    #   mfs.tmp <- parallel::parLapply(cl, wav[1], function(x) {
+    #
+    #     b <- tuneR::readWave(x, header = T) # read in audiofile
+    #     if(b$samples/b$sample.rate > 15) to <- 10 else to <- floor(b$samples/b$sample.rate)
+    #     b <- tuneR::readWave(x, from = 1, to = to, units = "seconds") # read in audiofile
+    #     f <- as.numeric(b@samp.rate)
+    #     # get freq spectrum
+    #     fs <- seewave::spectro(b, wl = 512, wn="rectangle", fftw=fftw, plot=F, dB = NULL) #
+    #     # str(fs)
+    #
+    #   })
+    #   rm(mfs.tmp)
+    # }
 
-        b <- tuneR::readWave(x, header = T) # read in audiofile
-        if(b$samples/b$sample.rate > 15) to <- 10 else to <- floor(b$samples/b$sample.rate)
-        b <- tuneR::readWave(x, from = 1, to = to, units = "seconds") # read in audiofile
-        f <- as.numeric(b@samp.rate)
-        # get freq spectrum
-        fs <- seewave::spectro(b, wl = 512, wn="rectangle", fftw=fftw, plot=F, dB = NULL) #
-        # str(fs)
-
-      })
-      rm(mfs.tmp)
-    }
+    # is it quicker to export all wav objects
 
     mfs.lst <- parallel::parLapply(cl, wav, function(x) {
 
@@ -101,10 +104,12 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       wl <- wl - wl%%2 # make sure it's even
 
       # get freq spectrum
-      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL, ...) # add , ...
+      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) # wl = 512 default, ...
       # str(fs)
       # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
       # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)
+      # why does ... work wiht parallel, when dB isn't exported?? because the value is given.. whereas wav is not.
+      # p 235 of Sueur book for amplitude normalisation.
 
       # take psd scores for each rain frequency window in khz
       mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
@@ -133,21 +138,25 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       wl <- wl - wl%%2 # make sure it's even
 
       # get freq spectrum
-      fs <- seewave::spectro(b, wl = wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) # add , ...
+      fs <- seewave::spectro(b, wl=wl, wn="rectangle", fftw=fftw, plot=F, dB = NULL) #, ...  wl = 512 default
       # str(fs)
       # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
       # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)
 
       # take psd scores for each rain frequency window in khz
       mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
-             freqLo, freqHi, SIMPLIFY = F)
-      # str(tmp2)
-    })
+           freqLo, freqHi, SIMPLIFY = F)
+      #str(psd.freq)
+  })
 
     close(pb)
     }
 
+
+  # str(res2)
+  # head(res2)
   # str(mfs.lst)
+  # x <- mfs.lst[[1]]
 
   # Get metrics here
   res <- lapply(mfs.lst, function(x) {
@@ -165,7 +174,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   # reformat list - store as numeric matrix with rownames attributes as filenames
   tmp <- lapply(1:2, function(x) do.call(rbind, sapply(res, function(y) y[x])))
   res2 <- do.call(cbind, tmp)
-  # head(res2)
+  # # head(res2)
   cNames <- apply(expand.grid("band", seq_along(freqLo), c("psd", "s2n"), KEEP.OUT.ATTRS = F),
                   1, paste0, collapse = ".")
   name.exp <- sapply(res, function(x) sapply(x, nrow)[1])

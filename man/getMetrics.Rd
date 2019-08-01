@@ -5,7 +5,7 @@
 \title{Get PSD and Signal-to-Noise Ratio for audio files}
 \usage{
 getMetrics(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
-  t.step = NULL, parallel = F)
+  t.step = NULL, parallel = F, ...)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories)}
