@@ -2,7 +2,7 @@
 
 R package for identification of rain in audio recordings
 
-*Installation*
+*Installation*  
 `install.packages("devtools")`
 `devtools::install_github("https://github.com/Cdevenish/hardRain")`
 

@@ -156,6 +156,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   # head(res2)
   # str(mfs.lst)
   # x <- mfs.lst[[1]]
+  # It's hard, hard, rain a gonna fall...
 
   # Get metrics here
   res <- lapply(mfs.lst, function(x) {
