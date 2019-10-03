@@ -11,10 +11,9 @@ getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
 \item{wav}{A vector of wav filenames (including directories) of known rain recordings. Or, the output matrix from
 \code{getMetrics} function.}
 
-\item{freqLo}{A numeric vector of Lower frequency cut offs for each band - defaults
-to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqLo}{A numeric vector of Lower frequency cut offs for each band.}
 
-\item{freqHi}{A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqHi}{A numeric vector of Higher frequency cut offs for each band.}
 
 \item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
 (must be loaded)}
@@ -24,12 +23,14 @@ a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{
 in \code{freqLo} and \code{freqHi}
 }
 \description{
-Calculate minimum and 2nd quartile thresholds for rain detection in audio files
+Calculate minimum and 2nd quartile thresholds for Power Spectrum Density (PSD) and Signal-to-Noise
+(s2n) ratio from files known to contain rain, at multiple frequency bands - defaults to 2 bands (0.6-1.2 kHz and
+4.4-5.6 kHz). For use by the classifyRain() function in order to detect the presence of rain in audio files
 }
 \examples{
 
 # Calculate thresholds using 5 files of training data (known rain recordings in wav files).
-# Only five files are used here for purposes of this example - but see recommendations in Metcalf et al...
+# Only five files are used here for purposes of this example - but see recommendations in Metcalf et al. 2019
 
 # Get filenames of training data
 train.fn <- list.files(system.file("extdata/rain", package = "hardRain"), "\\\\.wav$", full.names = T)

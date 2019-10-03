@@ -4,32 +4,31 @@
 \alias{cutRain}
 \title{Cut and save wav files according to rain classification}
 \usage{
-cutRain(x, threshold = c("min", "Q2"), outF, inF, start, label,
-  label.only = F)
+cutRain(x, threshold = c("min", "Q2"), inF, start, label.only = F,
+  outF, label.type)
 }
 \arguments{
 \item{x}{A matrix of results from \code{classifyRain}}
 
-\item{threshold}{A character vector with the threshold to use either "min" or "Q2". Defaults to "min"}
-
-\item{outF}{Destination folder for new wav files. Defaults to home directory if missing.}
+\item{threshold}{A character vector with the threshold type to use ("min" or "Q2"). Defaults to "min"}
 
 \item{inF}{Source folder for wav files. Defaults to home directory if missing.}
 
-\item{start}{Optional. A vector of dateTime objects giving the start time for each file in class.results}
-
-\item{label}{Optional. A character vector, either "audacity" or "raven", to include a label file to
-be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)}
-
 \item{label.only}{Logical. If TRUE, only label file is written, wav files are not cut and saved.}
+
+\item{outF}{Destination folder for new wav files. Defaults to home directory if missing.}
+
+\item{label.type}{Optional. A character vector, for the moment, just "audacity", to include a label file to
+be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)}
 }
 \value{
 A dataframe (invisibly) detailing the new wav files created, with, filename, full path,
 start times (optionally)
 }
 \description{
-Using results from \code{classifyRain}, input wav files/segments containing rain are cut and
-remaining contiguous snippets of non-rain are saved as new wav files
+A follow on function to \code{classifyRain} for longer wav files. This function labels and
+cuts (removes) sections of hard rain in audio files, then saves contiguous periods without rainfall as
+new wav files.
 }
 \details{
 This function is only designed to work with results from \code{classifyRain} where input audio files

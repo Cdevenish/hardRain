@@ -5,15 +5,14 @@
 \title{Get PSD and Signal-to-Noise Ratio for audio files}
 \usage{
 getMetrics(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
-  t.step = NULL, parallel = F, ...)
+  t.step = NULL, parallel = F)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories)}
 
-\item{freqLo}{A numeric vector of Lower frequency cut offs for each band - defaults
-to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqLo}{A numeric vector of Lower frequency cut offs for each band.}
 
-\item{freqHi}{A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqHi}{A numeric vector of Higher frequency cut offs for each band.}
 
 \item{t.step}{NULL or a numeric vector giving time in seconds in which to divide
 longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
@@ -28,9 +27,9 @@ filenames are conserved in the rownames
 }
 \description{
 This function does not generally need to be called directly. It is the workhorse function that
-reads wav files, extracts PSD and Signal-to-Noise for specified frequency bands using seewave
-function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will generally
-be used directly.
+reads wav files, extracts Power Spectrum Density (PSD) and Signal-to-Noise (s2n) for specified frequency bands
+using seewave function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will
+generally be used directly.
 }
 \examples{
 See examples in getThreshold() and \\code{\\link{classifyRain}}

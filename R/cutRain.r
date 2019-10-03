@@ -2,8 +2,9 @@
 #'
 #' @title Cut and save wav files according to rain classification
 #'
-#' @description Using results from \code{classifyRain}, input wav files/segments containing rain are cut and
-#' remaining contiguous snippets of non-rain are saved as new wav files
+#' @description A follow on function to \code{classifyRain} for longer wav files. This function labels and
+#' cuts (removes) sections of hard rain in audio files, then saves contiguous periods without rainfall as
+#' new wav files.
 #'
 #' @details This function is only designed to work with results from \code{classifyRain} where input audio files
 #' are subdivided into smaller time segments with \code{t.step} argument. If \code{label.only} is \code{FALSE},
@@ -16,19 +17,19 @@
 #' segment originating from the input wav file.
 #'
 #' @param x A matrix of results from \code{classifyRain}
-#' @param threshold A character vector with the threshold to use either "min" or "Q2". Defaults to "min"
-#' @param outF Destination folder for new wav files. Defaults to home directory if missing.
+#' @param threshold A character vector with the threshold type to use ("min" or "Q2"). Defaults to "min"
 #' @param inF Source folder for wav files. Defaults to home directory if missing.
-#' @param start Optional. A vector of dateTime objects giving the start time for each file in class.results
-#' @param label Optional. A character vector, either "audacity" or "raven", to include a label file to
+#' @param label.type Optional. A character vector, for the moment, just "audacity", to include a label file to
 #' be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)
 #' @param label.only Logical. If TRUE, only label file is written, wav files are not cut and saved.
+#' @param outF Destination folder for new wav files. Defaults to home directory if missing.
+
 #' @return A dataframe (invisibly) detailing the new wav files created, with, filename, full path,
 #' start times (optionally)
 #' @examples
 #'
 
-cutRain <- function(x, threshold = c("min", "Q2"), outF, inF, start, label, label.only = F){
+cutRain <- function(x, threshold = c("min", "Q2"), inF, start, label.only = F, outF, label.type){
 
 
   # check x is results format from classifyRain()
@@ -39,8 +40,9 @@ cutRain <- function(x, threshold = c("min", "Q2"), outF, inF, start, label, labe
   if(missing(inF)) inF <- getwd()
   if(missing(outF)) outF <- getwd()
 
-  if(!missing(start) && !class(start) %in% c("POSIXlt", "POSIXct")) stop("start must be a dateTime class - see ?
-DateTimeClasses")
+## not implemented yet...
+# @param start Optional. A vector of dateTime objects giving the start time for each file in classify results.
+# if(!missing(start) && !class(start) %in% c("POSIXlt", "POSIXct")) stop("start must be a dateTime class")
 
   if(label.only & missing(label)) stop("Must provide label if label.only is TRUE")
 
@@ -134,11 +136,11 @@ DateTimeClasses")
                            col.names = F,
                            sep = "\t")
                })
-           },
+           } #,
 
-           raven = {
+           #raven = {
 
-             stop("raven selection table not implemented yet")
+            # stop("raven selection table not implemented yet")
              # txt <- by(res2, list(res2$filename),function(x) cbind(Selection = "clear",
              #                                                       View = "Spectogram",
              #                                                       Channel = 1,
@@ -154,7 +156,7 @@ DateTimeClasses")
              #               sep = "\t")
              # })
 
-           }
+          # }
            )
 
 

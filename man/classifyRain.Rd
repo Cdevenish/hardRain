@@ -11,18 +11,17 @@ classifyRain(wav, thresh.vals, freqLo = c(0.6, 4.4), freqHi = c(1.2,
 \arguments{
 \item{wav}{A vector of wav filenames (including directories)}
 
-\item{thresh.vals}{A matrix or vector of thresholds obtained from \code{getThreshold}}
+\item{thresh.vals}{A named matrix or vector of thresholds obtained from \code{getThreshold} (see examples)}
 
-\item{freqLo}{A numeric vector of Lower frequency cut offs for each band - defaults
-to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqLo}{A numeric vector of Lower frequency cut offs for each band.}
 
-\item{freqHi}{A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)}
+\item{freqHi}{A numeric vector of Higher frequency cut offs for each band.}
 
 \item{t.step}{NULL or a numeric vector giving time in seconds in which to divide
 longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 and do not need to be subdivided (see details)}
 
-\item{threshold}{threshold method ("min" or "Q2") default calculated both - see details}
+\item{threshold}{threshold type ("min" or "Q2") default calculated both - see details}
 
 \item{ID}{vector of IDs (character or factor) for each wav file identifying rain status,
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
@@ -32,16 +31,24 @@ e.g. rain or non-rain (optional). This can be used for testing and calculating a
 }
 \value{
 a dataframe with the following columns: filename (of wav files), ID (if provided),
-logical columns with results of each threshold classification. If t.step is not NULL, its value is
-included in the data frame attributes
+logical columns with threshold values for each frequency band and measurement type. If t.step is not NULL,
+its value is included in the data frame attributes.
 }
 \description{
 Using thresholds from \code{getThreshold} function, audio files are classified as TRUE/FALSE for
-presence of rain using a minimum or quartile based threshold.
+presence of rain using a minimum or second quartile (more conservative) based threshold at multiple frequency
+ bands - defaults to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz).
 }
 \details{
-This function is based on rain classification techniques in Bedoya... Metcalfe et al... thresholds are calculated
-using minimum psd and signal to noise ratio (mean/sd) etc...
+This function is based on rain classification techniques in Metcalfe et al. (2019). Thresholds are
+ calculated using minimum psd and signal to noise ratio (mean/sd).
+
+ Metcalf, O. C., Lees, A.C., Barlow, J. & Devenish, C. (2019). hardRain: an R package for quick, automated
+ rainfall detection in ecoacoustic datasets using a threshold-based approach. Ecological Indicators (in press)
+
+See also:
+ Bedoya C, Isaza C, Daza JM, López JD. (2017). Automatic identification of rainfall in acoustic recordings.
+ Ecological Indicators 75:95–100.
 }
 \examples{
 # Get filenames of training data (known rain recordings in wav files). Only five files are used

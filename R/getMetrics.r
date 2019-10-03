@@ -3,14 +3,13 @@
 
 #' @title Get PSD and Signal-to-Noise Ratio for audio files
 #' @description This function does not generally need to be called directly. It is the workhorse function that
-#' reads wav files, extracts PSD and Signal-to-Noise for specified frequency bands using seewave
-#' function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will generally
-#' be used directly.
+#' reads wav files, extracts Power Spectrum Density (PSD) and Signal-to-Noise (s2n) for specified frequency bands
+#' using seewave function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will
+#' generally be used directly.
 #'
 #' @param wav A vector of wav filenames (including directories)
-#' @param freqLo A numeric vector of Lower frequency cut offs for each band - defaults
-#' to 2 bands (0.6-1.2 kHz and 4.4-5.6 kHz)
-#' @param freqHi A numeric vector of Higher frequency cut off - defaults to 2 bands: (0.6-1.2 kHz and 4.4-5.6 kHz)
+#' @param freqLo A numeric vector of Lower frequency cut offs for each band.
+#' @param freqHi A numeric vector of Higher frequency cut offs for each band.
 #' @param t.step NULL or a numeric vector giving time in seconds in which to divide
 #' longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 #' and do not need to be subdivided (see details)
