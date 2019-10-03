@@ -16,7 +16,8 @@
 #'
 #'
 #' @inheritParams getMetrics
-#' @param thresh.vals A named matrix or vector of thresholds obtained from \code{getThreshold} (see examples)
+#' @param thresh.vals A named matrix or vector of thresholds obtained from \code{getThreshold}. Alternatively,
+#' you can create your own (see examples for format).
 #' @param threshold threshold type ("min" or "Q2") default calculated both - see details
 #' @param ID vector of IDs (character or factor) for each wav file identifying rain status,
 #' e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.
@@ -43,6 +44,19 @@
 #'
 #' # How many files identified as rain/non-rain for each threshold?
 #' lapply(split(resBR, list(resBR$threshold)), function(x) table(x[,"value"]))
+#'
+#'
+#' # Using a matrix or vector of thresholds:
+#' thresh.m <- matrix(c(0.02995, 0.01507, 1.8849, 1.8340, 0.0324, 0.01715, 1.8880, 1.8792), nrow = 2, ncol = 4,
+#'                    dimnames = list(c("min", "Q2"), c("band.1.psd", "band.2.psd", "band.1.s2n", "band.2.s2n")))
+#' thresh.v <- c(band.1.psd=0.02995, band.2.psd= 0.01507, band.1.s2n=1.8849, band.2.s2n=1.8340)
+#'
+#' resBR2 <- classifyRain(test.fn, thresh.vals = thresh.m)
+#' head(resBR2)
+#'
+#' resBR3 <- classifyRain(test.fn, thresh.vals = thresh.v)
+#' head(resBR3)
+
 
 
 classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
