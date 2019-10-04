@@ -20,7 +20,8 @@
 #' @param threshold A character vector with the threshold type to use ("min" or "Q2"). Defaults to "min"
 #' @param inF Source folder for wav files. Defaults to home directory if missing.
 #' @param label.type Optional. A character vector, for the moment, just "audacity", to include a label file to
-#' be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)
+#' be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported).
+#' If NULL, no labels will be written
 #' @param label.only Logical. If TRUE, only label file is written, wav files are not cut and saved.
 #' @param outF Destination folder for new wav files. Defaults to inF if missing.
 
@@ -120,7 +121,7 @@ cutRain <- function(x, threshold = c("min", "Q2"), inF, label.only = F, outF, la
     mapply(function(x,y) tuneR::writeWave(x, filename = y), wavs, res2$outP)
 }
 
-  if(!missing(label.type)){
+  if(!is.null(label.type)){
 
     label.type <- match.arg(label.type, c("audacity", "raven"))
 
