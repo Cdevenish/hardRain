@@ -14,5 +14,5 @@ citEntry(entry = "Article",
   pages        = "X",
   url          = "X",
 
-  textVersion  = "Metcalf, O. C., Lees, A.C., Barlow, J. & Devenish, C. (2019). hardRain: an R package for quick, automated rainfall detection in ecoacoustic datasets using a threshold-based approach. Ecological Indicators (in press)"
+  textVersion  = "Metcalf, O. C., Lees, A.C., Barlow, J., Marsden, S.J.M. & Devenish, C. (2019). hardRain: an R package for quick, automated rainfall detection in ecoacoustic datasets using a threshold-based approach. Ecological Indicators (in press)"
 )

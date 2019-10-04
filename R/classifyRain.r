@@ -7,8 +7,9 @@
 #' @details This function is based on rain classification techniques in Metcalfe et al. (2019). Thresholds are
 #'  calculated using minimum psd and signal to noise ratio (mean/sd).
 #'
-#'  Metcalf, O. C., Lees, A.C., Barlow, J. & Devenish, C. (2019). hardRain: an R package for quick, automated
-#'  rainfall detection in ecoacoustic datasets using a threshold-based approach. Ecological Indicators (in press)
+#'  Metcalf, O. C., Lees, A.C., Barlow, J., Marsden, S.J.M. & Devenish, C. (2019). hardRain: an R package for
+#'  quick, automated rainfall detection in ecoacoustic datasets using a threshold-based approach. Ecological
+#'  Indicators (in press)
 #'
 #' See also:
 #'  Bedoya C, Isaza C, Daza JM, López JD. (2017). Automatic identification of rainfall in acoustic recordings.
