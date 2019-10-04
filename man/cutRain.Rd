@@ -4,8 +4,8 @@
 \alias{cutRain}
 \title{Cut and save wav files according to rain classification}
 \usage{
-cutRain(x, threshold = c("min", "Q2"), inF, start, label.only = F,
-  outF, label.type)
+cutRain(x, threshold = c("min", "Q2"), inF, label.only = F, outF,
+  label.type = "audacity")
 }
 \arguments{
 \item{x}{A matrix of results from \code{classifyRain}}
@@ -16,7 +16,7 @@ cutRain(x, threshold = c("min", "Q2"), inF, start, label.only = F,
 
 \item{label.only}{Logical. If TRUE, only label file is written, wav files are not cut and saved.}
 
-\item{outF}{Destination folder for new wav files. Defaults to home directory if missing.}
+\item{outF}{Destination folder for new wav files. Defaults to inF if missing.}
 
 \item{label.type}{Optional. A character vector, for the moment, just "audacity", to include a label file to
 be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)}

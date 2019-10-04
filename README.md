@@ -14,6 +14,8 @@ See vignette
 
 library(hardRain)
 
+example("classifyRain")
+
 # Get filenames of training data (known rain recordings in wav files). Only five files are used
 # here for purposes of this example
 
@@ -31,7 +33,7 @@ resBR <- classifyRain(test.fn, thresh.vals = trBR)
 head(resBR)
 
 # How many files identified as rain/non-rain for each threshold?
-lapply(split(resBR, list(resBR$threshold)), function(x) table(x[,"value"]))
+tapply(resBR$value, list(resBR$threshold), table)
 
 
 ```

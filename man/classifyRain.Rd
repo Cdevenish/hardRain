@@ -11,7 +11,8 @@ classifyRain(wav, thresh.vals, freqLo = c(0.6, 4.4), freqHi = c(1.2,
 \arguments{
 \item{wav}{A vector of wav filenames (including directories)}
 
-\item{thresh.vals}{A named matrix or vector of thresholds obtained from \code{getThreshold} (see examples)}
+\item{thresh.vals}{A named matrix of thresholds obtained from \code{getThreshold}. Alternatively,
+you can create your own matrix (see examples for format).}
 
 \item{freqLo}{A numeric vector of Lower frequency cut offs for each band.}
 
@@ -21,7 +22,7 @@ classifyRain(wav, thresh.vals, freqLo = c(0.6, 4.4), freqHi = c(1.2,
 longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 and do not need to be subdivided (see details)}
 
-\item{threshold}{threshold type ("min" or "Q2") default calculated both - see details}
+\item{threshold}{threshold type ("min" or "Q2") defaults to both - see details}
 
 \item{ID}{vector of IDs (character or factor) for each wav file identifying rain status,
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
@@ -68,5 +69,26 @@ resBR <- classifyRain(test.fn, thresh.vals = trBR)
 head(resBR)
 
 # How many files identified as rain/non-rain for each threshold?
-lapply(split(resBR, list(resBR$threshold)), function(x) table(x[,"value"]))
+tapply(resBR$value, list(resBR$threshold), table)
+
+#Using a custom matrix of thresholds:
+thresh.m2 <- matrix(c(0.02995, 0.01507, 1.8849, 1.8340, 0.0324, 0.01715, 1.8880, 1.8792),
+                   nrow = 2,
+                   ncol = 4,
+                   byrow = T,
+                   dimnames = list(c("min", "Q2"), c("band.1.psd", "band.2.psd", "band.1.s2n", "band.2.s2n")))
+
+# A matrix is required for just one threshold:
+thresh.m1 <- matrix(c(0.02995, 0.01507, 1.8849, 1.8340),
+                   nrow = 1,
+                   ncol = 4,
+                   byrow = T,
+                   dimnames = list("min", c("band.1.psd", "band.2.psd", "band.1.s2n", "band.2.s2n")))
+
+# Classify with custom thresholds
+resBR2 <- classifyRain(test.fn, thresh.vals = thresh.m2)
+head(resBR2)
+
+resBR3 <- classifyRain(test.fn, threhold = "min", thresh.vals = thresh.m1)
+head(resBR3)
 }

@@ -22,14 +22,14 @@
 #' @param label.type Optional. A character vector, for the moment, just "audacity", to include a label file to
 #' be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)
 #' @param label.only Logical. If TRUE, only label file is written, wav files are not cut and saved.
-#' @param outF Destination folder for new wav files. Defaults to home directory if missing.
+#' @param outF Destination folder for new wav files. Defaults to inF if missing.
 
 #' @return A dataframe (invisibly) detailing the new wav files created, with, filename, full path,
 #' start times (optionally)
 #' @examples
 #'
 
-cutRain <- function(x, threshold = c("min", "Q2"), inF, start, label.only = F, outF, label.type){
+cutRain <- function(x, threshold = c("min", "Q2"), inF, label.only = F, outF, label.type = "audacity"){
 
 
   # check x is results format from classifyRain()
@@ -38,7 +38,7 @@ cutRain <- function(x, threshold = c("min", "Q2"), inF, start, label.only = F, o
   threshold <- match.arg(threshold)
 
   if(missing(inF)) inF <- getwd()
-  if(missing(outF)) outF <- getwd()
+  if(missing(outF)) outF <- inF
 
 ## not implemented yet...
 # @param start Optional. A vector of dateTime objects giving the start time for each file in classify results.
