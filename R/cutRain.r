@@ -24,8 +24,7 @@
 #' @param label.only Logical. If TRUE, only label file is written, wav files are not cut and saved.
 #' @param outF Destination folder for new wav files. Defaults to inF if missing.
 
-#' @return A dataframe (invisibly) detailing the new wav files created, with, filename, full path,
-#' start times (optionally)
+#' @return A dataframe (invisibly) detailing the labels/new wav files created, with, filename and full path.
 #' @examples
 #'
 
@@ -44,7 +43,7 @@ cutRain <- function(x, threshold = c("min", "Q2"), inF, label.only = F, outF, la
 # @param start Optional. A vector of dateTime objects giving the start time for each file in classify results.
 # if(!missing(start) && !class(start) %in% c("POSIXlt", "POSIXct")) stop("start must be a dateTime class")
 
-  if(label.only & missing(label)) stop("Must provide label if label.only is TRUE")
+  # if(label.only & missing(label.type)) stop("Must provide label.type if label.only is TRUE")
 
   t.step <- attr(x, "t.step")
 
@@ -121,11 +120,11 @@ cutRain <- function(x, threshold = c("min", "Q2"), inF, label.only = F, outF, la
     mapply(function(x,y) tuneR::writeWave(x, filename = y), wavs, res2$outP)
 }
 
-  if(!missing(label)){
+  if(!missing(label.type)){
 
-    label <- match.arg(label, c("audacity", "raven"))
+    label.type <- match.arg(label.type, c("audacity", "raven"))
 
-    switch(label,
+    switch(label.type,
 
            audacity = {
              txt <- by(res2, list(res2$filename),function(x) cbind(x[,c("start", "stop")], status = "clear"))
