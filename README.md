@@ -14,6 +14,8 @@ See vignette
 
 library(hardRain)
 
+citation("hardRain")
+
 example("classifyRain")
 
 # Get filenames of training data (known rain recordings in wav files). Only five files are used
