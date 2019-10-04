@@ -22,8 +22,7 @@ cutRain(x, threshold = c("min", "Q2"), inF, label.only = F, outF,
 be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)}
 }
 \value{
-A dataframe (invisibly) detailing the new wav files created, with, filename, full path,
-start times (optionally)
+A dataframe (invisibly) detailing the labels/new wav files created, with, filename and full path.
 }
 \description{
 A follow on function to \code{classifyRain} for longer wav files. This function labels and
