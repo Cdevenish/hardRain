@@ -89,6 +89,6 @@ thresh.m1 <- matrix(c(0.02995, 0.01507, 1.8849, 1.8340),
 resBR2 <- classifyRain(test.fn, thresh.vals = thresh.m2)
 head(resBR2)
 
-resBR3 <- classifyRain(test.fn, threhold = "min", thresh.vals = thresh.m1)
+resBR3 <- classifyRain(test.fn, threshold = "min", thresh.vals = thresh.m1)
 head(resBR3)
 }

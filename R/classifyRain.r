@@ -63,7 +63,7 @@
 #' resBR2 <- classifyRain(test.fn, thresh.vals = thresh.m2)
 #' head(resBR2)
 #'
-#' resBR3 <- classifyRain(test.fn, threhold = "min", thresh.vals = thresh.m1)
+#' resBR3 <- classifyRain(test.fn, threshold = "min", thresh.vals = thresh.m1)
 #' head(resBR3)
 
 

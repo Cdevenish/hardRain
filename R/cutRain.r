@@ -160,7 +160,7 @@ cutRain <- function(x, threshold = c("min", "Q2"), inF, label.only = F, outF, la
 
 
   }
-  invisble(res2)
+  invisible(res2)
 
 }
 
