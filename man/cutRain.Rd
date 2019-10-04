@@ -18,8 +18,9 @@ cutRain(x, threshold = c("min", "Q2"), inF, label.only = F, outF,
 
 \item{outF}{Destination folder for new wav files. Defaults to inF if missing.}
 
-\item{label.type}{Optional. A character vector, for the moment, just "audacity", to include a label file to
-be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported)}
+\item{label.type}{A character vector, for the moment, just "audacity", to include a label file to
+be written in \code{inF} for the original wav, labelling all non-rain sections (ie those that will be exported).
+If NULL, no labels will be written}
 }
 \value{
 A dataframe (invisibly) detailing the labels/new wav files created, with, filename and full path.
