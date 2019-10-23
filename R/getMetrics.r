@@ -7,14 +7,14 @@
 #' using seewave function \code{spectro()}. This function is called by getThreshold() and classifyRain() which will
 #' generally be used directly.
 #'
-#' @param wav A vector of wav filenames (including directories)
+#' @param wav A vector of wav filenames (including directories) or an object of class wav from the tuner package (see parallel, below)
 #' @param freqLo A numeric vector of Lower frequency cut offs for each band.
 #' @param freqHi A numeric vector of Higher frequency cut offs for each band.
 #' @param t.step NULL or a numeric vector giving time in seconds in which to divide
 #' longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 #' and do not need to be subdivided (see details)
 #' @param parallel Logical. Whether to use multicore processing with the parallel package (Windows only)
-#' (must be loaded)
+#' (must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).
 #' @return A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
 #' @examples See examples in getThreshold() and \code{\link{classifyRain}}
@@ -26,8 +26,13 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   # library(seewave)
   # library(tuneR)
 
+  ## TO DO... not designed for single wav objects... so need to streamline code for this... ie at moment
+  ## lots of apply functions for single wav object, and progress bar, etc etc..
 
-  if(length(wav) == 0 | is.null(wav)) stop("wav filenames input does not exit")
+
+
+  if(length(wav) == 0 | is.null(wav)) stop("wav filenames do not exist")
+  if(!class(wav) %in% c("character", "Wave")) stop("wav must be either a character vector of filenames or a single wav object from tuneR package")
 
   if(!is.null(t.step)){
 
@@ -54,6 +59,9 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
   # check that freqHi > freqLo
   if(!all(freqHi > freqLo)) stop("freqHi must be higher than freqLo pairwise")
+
+  # catch read wav errors, with try and record them here: Only when wav is filenames
+  if(class(wav) == "character") tryError <- vector(mode = "logical", length = length(wav))
 
   if(parallel){
 
@@ -95,7 +103,24 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
       #if(!parallel) setTxtProgressBar(pb, which(x == wav))
 
-      b <- tuneR::readWave(x) # read in audiofile
+      if(class(wav) == "Wave"){b <- wav} else {
+
+        # read in audiofile
+        b <- tuneR::readWave(x)
+
+        ## FINISH THIS...
+        ## what happens if a mfs.lst element is NA further down.... find out, before adding this...
+
+        # b <- try(tuneR::readWave(x), silent = T)
+        #
+        # tryErr <- inherits(b, "try-error")
+        # tryError[which(wav == x)] <- tryErr
+
+      }
+
+      ## hacky way....
+      # if(class(wav) == "Wave" & tryErr) NA else {
+
       f <- as.numeric(b@samp.rate)
 
       # get wl from t.step (a few ms will probably be left unprocessed at end of each file with step)
@@ -114,10 +139,12 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
       mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
              freqLo, freqHi, SIMPLIFY = F)
       # str(tmp2)
+
+      #} # end of else if not a try error
+
     })
 
     parallel::stopCluster(cl)
-
 
 
   } else {
@@ -129,7 +156,21 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
       setTxtProgressBar(pb, which(x == wav))
 
-      b <- tuneR::readWave(x) # read in audiofile
+      if(class(wav) == "Wave"){b <- wav} else {
+
+        # read in audiofile
+        b <- tuneR::readWave(x)
+
+        # FINISH THIS....
+        # b <- try(tuneR::readWave(x), silent = T)
+        #
+        # tryErr <- inherits(b, "try-error")
+        # tryError[which(wav == x)] <- tryErr
+
+      }
+
+
+
       f <- as.numeric(b@samp.rate)
 
       # get wl from t.step (a few ms will probably be left unprocessed at end of each file with step)
@@ -149,7 +190,15 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   })
 
     close(pb)
-    }
+  }
+
+
+  if(class(wav)== "character") {
+    dodgy.files <- wav[tryError.ind]
+    wav <- wav[!tryError.ind]
+    warning(paste(sum(tryError), "wav files failed to read - possibly corrupt. Check these files:\n",
+                paste(dodgy.files, collapse = "\n")), call. = T)
+  }
 
 
   # str(res2)

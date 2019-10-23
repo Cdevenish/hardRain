@@ -8,7 +8,7 @@ getMetrics(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
   t.step = NULL, parallel = F)
 }
 \arguments{
-\item{wav}{A vector of wav filenames (including directories)}
+\item{wav}{A vector of wav filenames (including directories) or an object of class wav from the tuner package (see parallel, below)}
 
 \item{freqLo}{A numeric vector of Lower frequency cut offs for each band.}
 
@@ -19,7 +19,7 @@ longer files. If NULL, it is assumed that all files analysed are suitably short 
 and do not need to be subdivided (see details)}
 
 \item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
-(must be loaded)}
+(must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
 }
 \value{
 A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},

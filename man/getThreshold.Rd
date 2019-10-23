@@ -16,7 +16,7 @@ getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
 \item{freqHi}{A numeric vector of Higher frequency cut offs for each band.}
 
 \item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
-(must be loaded)}
+(must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
 }
 \value{
 a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)

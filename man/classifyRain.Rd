@@ -9,7 +9,7 @@ classifyRain(wav, thresh.vals, freqLo = c(0.6, 4.4), freqHi = c(1.2,
   parallel = F)
 }
 \arguments{
-\item{wav}{A vector of wav filenames (including directories)}
+\item{wav}{A vector of wav filenames (including directories) or an object of class wav from the tuner package (see parallel, below)}
 
 \item{thresh.vals}{A named matrix of thresholds obtained from \code{getThreshold}. Alternatively,
 you can create your own matrix (see examples for format).}
@@ -28,7 +28,7 @@ and do not need to be subdivided (see details)}
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
 
 \item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
-(must be loaded)}
+(must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
 }
 \value{
 a dataframe with the following columns: filename (of wav files), ID (if provided),
