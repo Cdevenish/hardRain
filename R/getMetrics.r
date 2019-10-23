@@ -61,7 +61,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   if(!all(freqHi > freqLo)) stop("freqHi must be higher than freqLo pairwise")
 
   # catch read wav errors, with try and record them here: Only when wav is filenames
-  if(class(wav) == "character") tryError <- vector(mode = "logical", length = length(wav))
+  # if(class(wav) == "character") tryError <- vector(mode = "logical", length = length(wav))
 
   if(parallel){
 
@@ -192,13 +192,15 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     close(pb)
   }
 
+  ## display filenames that couldn't be loaded with readwav
+  ## TO DO
 
-  if(class(wav)== "character") {
-    dodgy.files <- wav[tryError.ind]
-    wav <- wav[!tryError.ind]
-    warning(paste(sum(tryError), "wav files failed to read - possibly corrupt. Check these files:\n",
-                paste(dodgy.files, collapse = "\n")), call. = T)
-  }
+  # if(class(wav)== "character") {
+  #   dodgy.files <- wav[tryError]
+  #   wav <- wav[!tryError]
+  #   warning(paste(sum(tryError), "wav files failed to read - possibly corrupt. Check these files:\n",
+  #               paste(dodgy.files, collapse = "\n")), call. = T)
+  # }
 
 
   # str(res2)
