@@ -74,14 +74,16 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
                          threshold = c("min", "Q2"), ID = NULL, parallel = F){
 
 
-  if(mode(wav) == "character" & is.vector(wav)){
+  if((mode(wav) == "character" & is.vector(wav)) | class(wav)=="Wave"){
     tmp <- getMetrics(wav, freqLo=freqLo, freqHi=freqHi, t.step = t.step, parallel = parallel)
     } else {if(class(wav) == "matrix") {
       tmp <- wav
       } else stop("If wav is not vector of filenames, it should be a matrix - output of getMetrics()")
     }
 
-  f.names <- unname(rownames(tmp))
+  ## get names for filenames in results data frame..
+  if(class(wav) == "Wave" & nrow(tmp) == 1) {
+    f.names <- deparse(substitute(wav))} else f.names <- unname(rownames(tmp))
 
   # check names on threshold type...
   if(!all(colnames(tmp) == colnames(thresh.vals))) stop("Threshold column names do not match data")
@@ -94,6 +96,7 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
   threshold <- match.arg(threshold, several.ok = T)
 
   ## produce results for both thresholds
+  # x <- "min"
 
   res2 <- lapply(threshold, function(x){
 
@@ -102,14 +105,18 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
     # evaluate data against thresholds
     res <- t(t(tmp) >= t.val)
     # head(res); tail(res)
+    # class(res); str(res)
 
     ### sum by thresholds (cumulative)
 
     # rearrange order of columns in res for easier summing below
-    res <- res[,c(seq(1, noBands*2,2), seq(2, noBands*2, 2))]
+    # make sure below returns a matrix, not a vector when nrow(res) == 1
+    res <- res[,c(seq(1, noBands*2,2), seq(2, noBands*2, 2)), drop = F]
+    # class(res); str(res)
 
     # sum first two bands, then first 4 bands, first 6 bands, etc.
-    bands <- lapply(seq_len(noBands), function(x) unname(apply(res[,1:(x*noBands)], 1, all)))
+    # x <- 1
+    bands <- lapply(seq_len(noBands), function(x) unname(apply(res[,1:(x*noBands), drop = F], 1, all)))
 
     bands <- data.frame(value = unlist(bands))
     bands$band <- rep(paste0("band", seq_len(noBands)), each = nrow(tmp))

@@ -241,7 +241,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   res2 <- do.call(cbind, tmp)
   # # head(res2)
 
-  if(class(wav)== "Wave") fnames <- 1 else {
+  if(class(wav)== "Wave") fnames <- deparse(substitute(wav)) else {
     fnames <- basename(wav)
   }
 
