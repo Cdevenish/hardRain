@@ -4,8 +4,13 @@
 \alias{getMetrics}
 \title{Get PSD and Signal-to-Noise Ratio for audio files}
 \usage{
-getMetrics(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
-  t.step = NULL, parallel = F)
+getMetrics(
+  wav,
+  freqLo = c(0.6, 4.4),
+  freqHi = c(1.2, 5.6),
+  t.step = NULL,
+  parallel = F
+)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories) or an object of class wav from the tuner package (see parallel, below)}
@@ -32,5 +37,5 @@ using seewave function \code{spectro()}. This function is called by getThreshold
 generally be used directly.
 }
 \examples{
-See examples in getThreshold() and \\code{\\link{classifyRain}}
+See examples in getThreshold() and \code{\link{classifyRain}}
 }

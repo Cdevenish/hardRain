@@ -76,7 +76,7 @@ classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
 
   if((mode(wav) == "character" & is.vector(wav)) | class(wav)=="Wave"){
     tmp <- getMetrics(wav, freqLo=freqLo, freqHi=freqHi, t.step = t.step, parallel = parallel)
-    <} else {if(class(wav) == "matrix") {
+    } else {if(class(wav) == "matrix") {
       tmp <- wav
       } else stop("If wav is not vector of filenames, it should be a matrix - output of getMetrics()")
     }

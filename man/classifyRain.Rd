@@ -4,9 +4,16 @@
 \alias{classifyRain}
 \title{Classify audio files for presence/absence of rain}
 \usage{
-classifyRain(wav, thresh.vals, freqLo = c(0.6, 4.4), freqHi = c(1.2,
-  5.6), t.step = NULL, threshold = c("min", "Q2"), ID = NULL,
-  parallel = F)
+classifyRain(
+  wav,
+  thresh.vals,
+  freqLo = c(0.6, 4.4),
+  freqHi = c(1.2, 5.6),
+  t.step = NULL,
+  threshold = c("min", "Q2"),
+  ID = NULL,
+  parallel = F
+)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories) or an object of class wav from the tuner package (see parallel, below)}

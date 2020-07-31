@@ -4,8 +4,14 @@
 \alias{cutRain}
 \title{Cut and save wav files according to rain classification}
 \usage{
-cutRain(x, threshold = c("min", "Q2"), inF, label.only = F, outF,
-  label.type = "audacity")
+cutRain(
+  x,
+  threshold = c("min", "Q2"),
+  inF,
+  label.only = F,
+  outF,
+  label.type = "audacity"
+)
 }
 \arguments{
 \item{x}{A matrix of results from \code{classifyRain}}

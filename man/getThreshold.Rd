@@ -4,8 +4,7 @@
 \alias{getThreshold}
 \title{Calculate thresholds for rain detection in audio files}
 \usage{
-getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6),
-  parallel = F)
+getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6), parallel = F)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories) of known rain recordings. Or, the output matrix from

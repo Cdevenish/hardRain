@@ -3,7 +3,6 @@
 \docType{package}
 \name{hardRain}
 \alias{hardRain}
-\alias{hardRain-package}
 \title{hardRain: A package for detecting rain events in audio data}
 \description{
 The hardRain package provides two main functions:
