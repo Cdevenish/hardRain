@@ -240,6 +240,9 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   tmp <- lapply(1:2, function(x) do.call(rbind, sapply(res, function(y) y[x])))
   res2 <- do.call(cbind, tmp)
   # # head(res2)
+  # dim(res2)
+
+  # Do naming, and package into data frame, etc
 
   if(class(wav)== "Wave") fnames <- deparse(substitute(wav)) else {
     fnames <- basename(wav)
@@ -247,9 +250,16 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
   cNames <- apply(expand.grid("band", seq_along(freqLo), c("psd", "s2n"), KEEP.OUT.ATTRS = F),
                   1, paste0, collapse = ".")
+
   name.exp <- sapply(res, function(x) sapply(x, nrow)[1])
 
-  dimnames(res2) <- list(mapply(function(x,y) rep(x, each= y), fnames, name.exp), cNames)
+  # nTmp <- list(unlist(mapply(function(x,y) rep(x, each= y), fnames, name.exp, SIMPLIFY = F)),
+  #              cNames)
+  # str(nTmp, max.level=1)
+  # sum(sapply(nTmp, length))
+
+  dimnames(res2) <- list(unlist(mapply(function(x,y) rep(x, each= y), fnames, name.exp, SIMPLIFY = F)),
+                         cNames)
 
   if(!is.null(t.step)) {
 
@@ -257,6 +267,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     attributes(res2) <-  c(attributes(res2), t.step = t.step, duration = list(unlist(duration)))
   }
   rm(tmp, cNames)
+  #head(res2)
 
   return(res2)
 
