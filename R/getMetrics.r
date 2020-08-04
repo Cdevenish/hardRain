@@ -105,7 +105,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
       # library(parallel) # in base R.. so ok just to ::
 
-      noCores <- parallel::detectCores() - 1
+      noCores <- parallel::detectCores() - 2
       cl <- parallel::makeCluster(noCores)
 
       parallel::clusterExport(cl, c("wav", "t.step", "fftw", "freqLo", "freqHi"), envir = environment())
