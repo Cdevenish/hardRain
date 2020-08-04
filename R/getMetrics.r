@@ -159,9 +159,13 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
         # p 235 of Sueur book for amplitude normalisation.
 
         # take psd scores for each rain frequency window in khz
-        mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
+        fs_res <- mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
                freqLo, freqHi, SIMPLIFY = F)
         # str(tmp2)
+
+        return(fs_res)
+        rm(fs, b, fs_res); gc()
+
 
         #} # end of else if not a try error
 
