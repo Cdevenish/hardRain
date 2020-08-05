@@ -12,7 +12,7 @@ classifyRain(
   t.step = NULL,
   threshold = c("min", "Q2"),
   ID = NULL,
-  parallel = F
+  parallel = 0
 )
 }
 \arguments{
@@ -34,8 +34,10 @@ and do not need to be subdivided (see details)}
 \item{ID}{vector of IDs (character or factor) for each wav file identifying rain status,
 e.g. rain or non-rain (optional). This can be used for testing and calculating accuracy metrics.}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
-(must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
+\item{parallel}{Numeric (or logical). Defaults to 0 - no parallel processing. If `TRUE` will use multicore
+processing with the parallel package (Windows only; must be loaded), with number of cores - 2.
+Otherwise, a positive integer specifies number of cores to use. If wav is a single wav object it
+makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
 }
 \value{
 a dataframe with the following columns: filename (of wav files), ID (if provided),

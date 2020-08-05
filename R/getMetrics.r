@@ -13,14 +13,16 @@
 #' @param t.step NULL or a numeric vector giving time in seconds in which to divide
 #' longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 #' and do not need to be subdivided (see details)
-#' @param parallel Logical. Whether to use multicore processing with the parallel package (Windows only)
-#' (must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).
+#' @param parallel Numeric (or logical). Defaults to 0 - no parallel processing. If `TRUE` will use multicore
+#' processing with the parallel package (Windows only; must be loaded), with number of cores - 2.
+#' Otherwise, a positive integer specifies number of cores to use. If wav is a single wav object it
+#' makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).
 #' @return A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},
 #' filenames are conserved in the rownames
 #' @examples See examples in getThreshold() and \code{\link{classifyRain}}
 
 
-getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = NULL, parallel = F){
+getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = NULL, parallel = 0){
 
   # These are in dependencies, so don't need to be here for final package functions
   # library(seewave)
@@ -50,6 +52,15 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
   } else {
     fftw <- F
   }
+  # check parallel options
+  if(is.numeric(parallel)) {
+    if(parallel > 0) {
+      noCores <- parallel
+      parallel <- T
+      } else parallel <- F
+  } else if(is.logical(parallel)) {
+        if(parallel) noCores <-  parallel::detectCores() - 2
+      } else stop("parallel must be either numeric or logical")
 
   # check that freqLo and freqHi are same length
   if(length(freqLo) != length(freqHi)) stop("freqLo and freqHi must be the same length")
@@ -104,8 +115,6 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
     if(parallel){
 
       # library(parallel) # in base R.. so ok just to ::
-
-      noCores <- parallel::detectCores() - 2
       cl <- parallel::makeCluster(noCores)
 
       parallel::clusterExport(cl, c("wav", "t.step", "fftw", "freqLo", "freqHi"), envir = environment())

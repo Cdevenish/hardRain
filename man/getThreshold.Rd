@@ -4,7 +4,7 @@
 \alias{getThreshold}
 \title{Calculate thresholds for rain detection in audio files}
 \usage{
-getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6), parallel = F)
+getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6), parallel = 0)
 }
 \arguments{
 \item{wav}{A vector of wav filenames (including directories) of known rain recordings. Or, the output matrix from
@@ -14,8 +14,10 @@ getThreshold(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2, 5.6), parallel = F)
 
 \item{freqHi}{A numeric vector of Higher frequency cut offs for each band.}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
-(must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
+\item{parallel}{Numeric (or logical). Defaults to 0 - no parallel processing. If `TRUE` will use multicore
+processing with the parallel package (Windows only; must be loaded), with number of cores - 2.
+Otherwise, a positive integer specifies number of cores to use. If wav is a single wav object it
+makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
 }
 \value{
 a matrix of \code{min} and \code{Q2} thresholds (rows) for \code{psd} and \code{s2n} at each band (columns)

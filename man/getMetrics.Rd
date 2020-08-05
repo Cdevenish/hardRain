@@ -9,7 +9,7 @@ getMetrics(
   freqLo = c(0.6, 4.4),
   freqHi = c(1.2, 5.6),
   t.step = NULL,
-  parallel = F
+  parallel = 0
 )
 }
 \arguments{
@@ -23,8 +23,10 @@ getMetrics(
 longer files. If NULL, it is assumed that all files analysed are suitably short (e.g. 15 s each)
 and do not need to be subdivided (see details)}
 
-\item{parallel}{Logical. Whether to use multicore processing with the parallel package (Windows only)
-(must be loaded). If wav is a single wav object it makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
+\item{parallel}{Numeric (or logical). Defaults to 0 - no parallel processing. If `TRUE` will use multicore
+processing with the parallel package (Windows only; must be loaded), with number of cores - 2.
+Otherwise, a positive integer specifies number of cores to use. If wav is a single wav object it
+makes no sense to use parallel here (rather use hardRain functions within a larger parallelised loop).}
 }
 \value{
 A numeric matrix with columns \code{psd} and \code{s2n} for each wav file in \code{wav},

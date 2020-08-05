@@ -71,7 +71,7 @@
 
 classifyRain <- function(wav, thresh.vals, freqLo = c(0.6, 4.4),
                          freqHi = c(1.2,5.6), t.step = NULL,
-                         threshold = c("min", "Q2"), ID = NULL, parallel = F){
+                         threshold = c("min", "Q2"), ID = NULL, parallel = 0){
 
 
   if((mode(wav) == "character" & is.vector(wav)) | class(wav)=="Wave"){

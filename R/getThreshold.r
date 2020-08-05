@@ -24,7 +24,7 @@
 #' trBR
 
 
-getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), parallel = F){
+getThreshold <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), parallel = 0){
 
 
   if(mode(wav) == "character" & is.vector(wav)){
