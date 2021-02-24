@@ -170,7 +170,7 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
         # take psd scores for each rain frequency window in khz
         fs_res <- mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
                freqLo, freqHi, SIMPLIFY = F)
-        # str(tmp2)
+        # str(fs_res)
 
         return(fs_res)
         rm(fs, b, fs_res); gc()
@@ -191,8 +191,6 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
 
       mfs.lst <- lapply(wav, function(x) {
 
-        setTxtProgressBar(pb, which(x == wav))
-
         # read in audiofile
         b <- tuneR::readWave(x)
 
@@ -208,11 +206,13 @@ getMetrics <- function(wav, freqLo = c(0.6, 4.4), freqHi = c(1.2,5.6), t.step = 
         # with dB = NULL, then this gives a ^2 already, even if dBref is NULL
         # 'dB' argument computes 20*log10(x) where x is the FFT, which is equivalent to 10*log10(x^2)
 
+        setTxtProgressBar(pb, which(x == wav))
+
         # take psd scores for each rain frequency window in khz
         mapply(function(lo,hi) fs$amp[fs$freq > lo & fs$freq < hi, ,drop = F],
                freqLo, freqHi, SIMPLIFY = F)
         #str(psd.freq)
-      })
+        })
 
       close(pb)
     }
