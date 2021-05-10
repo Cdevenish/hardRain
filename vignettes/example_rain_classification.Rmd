@@ -50,10 +50,10 @@ Calculate the threshold using default settings - for two frequency bands
 # devtools::install_github("https://github.com/Cdevenish/hardRain")
 # library(hardRain)
 
-trBR <- getThreshold(train.BR, fn = "spec")
+trBR <- getThreshold(train.BR)
 trBR
 
-trMCR <- getThreshold(train.MCR, fn = "spec")
+trMCR <- getThreshold(train.MCR)
 trMCR
 ```
 
@@ -61,8 +61,8 @@ trMCR
 Inspect the PSD and signal to noise values for rain and non-rain files at specific frequency bands
 
 ```{r}
-metBR <- getMetrics(test.BR, fn = "spec")
-metMCR <- getMetrics(test.MCR, fn = "spec")
+metBR <- getMetrics(test.BR)
+metMCR <- getMetrics(test.MCR)
 
 # bind into a data frame and add location
 psd_s2n <- data.frame(filename = c(rownames(metBR), rownames(metMCR)), 
@@ -86,14 +86,14 @@ boxplot(s2n ~ rain + loc, data = psd_s2n)
 Classify the test files using the thresholds obtained above
 
 ```{r}
-resBR <- classifyRain(test.BR, t.values = trBR, fn = "spec", threshold = "min")
-resMCR <- classifyRain(test.MCR, t.values = trMCR, fn = "spec", threshold = "min")
+resBR <- classifyRain(test.BR, t.values = trBR, threshold = "min")
+resMCR <- classifyRain(test.MCR, t.values = trMCR, threshold = "min")
 
 # How many files identified as rain/non-rain?
 # table(resBR)
 ```
 
-Accuracy metrics
+
 
 
 
