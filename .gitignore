@@ -35,3 +35,6 @@ inst/doc
 
 # working files
 working/
+
+# extra data - not for github storage (too large)
+extra_data/
