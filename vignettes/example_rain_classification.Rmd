@@ -3,7 +3,7 @@ title: "Rain classification example"
 author: "C Devenish & O Metcalfe"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{example_rain_classification}
+  %\VignetteIndexEntry{rain_classification_example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,86 +11,146 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
+
+```{r}
+##### NOT RUN ######
+
+```
+
+This vignette will download an additional data set for training and testing. It will be stored within the root directory of the hardRain package. Run the R chunks to download and use this extra testing data.
 
 ```{r setup}
 library(hardRain)
+library(ggplot2)
+library(tidyr)
+
 ```
 
 
-# 1. Obtain wav filenames
+## 1. Obtain wav filenames
 
-NOTE: this will download 100 15s wav files (120 MB) to a new directory created in your home directory.
+NOTE: this will download 200 15s wav files (252 MB) to a new directory.
 
-Create temporary directories for the rain and test files
+*Option 1.* Download using `osfr` library. This will create a directory named 'extra_data' 
+in the hardRain root folder in your R library location. 
+You must have write permission to this folder.
 ```{r}
-dir.create(tmp1 <- tempfile("rainBR_", tmpdir = getwd()))
-dir.create(tmp2 <- tempfile("testBR_", tmpdir = getwd()))
+library(osfr)
+
+hr_path <- system.file(package = "hardRain")
+extra_data_dir <- file.path(hr_path, "extra_data")
+
+if(!dir.exists(extra_data_dir)){
+  
+  # get osf project
+  hardRain <- osf_retrieve_node("https://osf.io/qpev7/")
+  
+  # list files on hardRain osf project
+  ls_files <- osf_ls_files(x = hardRain)
+  ls_files
+  
+  # get id for extra_data folder
+  id <- ls_files$id[ls_files$name == "extra_data"]
+  
+  # get directory 
+  extra_data_osf <- osf_retrieve_file(id)
+  
+  # download data to package root in a new 'extra_data' directory
+  hardRain_osf2 <- osf_download(x = extra_data_osf,
+                                path = hr_path,
+                                recurse = TRUE,
+                                conflicts= "skip",
+                                progress = TRUE)
+  
+  } else warning("Directory already exists - check contents!")
+
+
+
+
+
 ```
 
-Download the rain and test data:
-* rain data: 100 wav files known to be hard rain
-* test data: 100 wav files (50 rain, 50 non-rain) 
-
+*Option 2.* 
+Download the complete data set from [here](https://osf.io/qpev7/files/osfstorage) as a zip and store in your desired location 
+and set this variable to the 'extra_data' folder location
 ```{r}
-download.file(url = xxx, destfile = tmp1)
- 
-# get the filenames (using regular expressions to differentiate the filenames)
-train.BR  <- list.files(path = tmp1, pattern = "BR.*rain.*\\.wav$")
-train.MCR <- list.files(path = tmp1, pattern = "MCR.*rain.*\\.wav$")
-test.BR <- list.files(path = tmp1, pattern = "BR.*test.*\\.wav$")
-test.MCR <- list.files(path = tmp1, pattern = "MCR.*test.*\\.wav$")
+# extra_data_dir <- "PATH/TO/extra_data"
+
 ```
+
+Rain and test data:  
+- rain data: 100 wav files known to be hard rain  
+- test data: 100 wav files - 50 rain, 50 non-rain (clear)  
+
+Get the filenames of the training and test data:
+```{r}
+train  <- list.files(path = file.path(extra_data_dir, "rain"), pattern = "\\.wav$", full.names = TRUE)
+test <- list.files(path = file.path(extra_data_dir, "test"), pattern = "\\.wav$", full.names = TRUE)
+
+
+```
+
+
+## 2. Calculate thresholds on training data
 
 Calculate the threshold using default settings - for two frequency bands
 ```{r}
-
-# devtools::install_github("https://github.com/Cdevenish/hardRain")
-# library(hardRain)
-
-trBR <- getThreshold(train.BR)
-trBR
-
-trMCR <- getThreshold(train.MCR)
-trMCR
+tr <- getThreshold(train)
+tr
 ```
 
 
-Inspect the PSD and signal to noise values for rain and non-rain files at specific frequency bands
+Inspect the Power Spectrum Density (psd) and Signal to Noise values (s2n) for rain and non-rain files at specific frequency bands
 
 ```{r}
-metBR <- getMetrics(test.BR)
-metMCR <- getMetrics(test.MCR)
+met <- getMetrics(test)
+head(met)
 
-# bind into a data frame and add location
-psd_s2n <- data.frame(filename = c(rownames(metBR), rownames(metMCR)), 
-                      rbind(metBR, metMCR), 
-                      loc = c(rep("BR", length(test.BR)), rep("MCR", length(test.MCR))))
+# bind into a data frame with the filenames
+psd_s2n <- data.frame(filename = rownames(met), met)
+rownames(psd_s2n) <- NULL
+
+summary(psd_s2n)
 
 # add test status
-psd_s2n$rain <- ifelse(grepl("rain", psd_s2n$filename), TRUE, FALSE)
+psd_s2n$rain <- ifelse(grepl("Clear", psd_s2n$filename), FALSE, TRUE)
+head(psd_s2n)
 
-# Draw a boxplot to see separation between rain and non-rain for each metric
+# reorganise
+metrics <- tidyr::pivot_longer(psd_s2n, c(band.1.psd:band.2.s2n),
+                               names_to = c("band", "metric"),
+                               names_pattern = "(band\\.1|band\\.2)\\.(.*)",
+                               values_to = "value")
 
-boxplot(psd ~ rain + loc, data = psd_s2n)
-boxplot(s2n ~ rain + loc, data = psd_s2n)
+head(metrics)
+```
 
-## Or with ggplot
-
+Draw a boxplot to see separation between rain and non-rain for each metric
+```{r}
+ggplot(metrics, aes(x = band, y = value, fill = rain))+
+  geom_boxplot()+
+  facet_wrap(~metric, scales = "free_y")+
+  ylab("Metric value")+
+  xlab("Band")
 
 ```
 
+## 3 Classify the test files 
 
 Classify the test files using the thresholds obtained above
-
 ```{r}
-resBR <- classifyRain(test.BR, t.values = trBR, threshold = "min")
-resMCR <- classifyRain(test.MCR, t.values = trMCR, threshold = "min")
+res <- classifyRain(test, thresh.vals = tr, threshold = c("min", "Q2"), ID = !grepl("Clear", basename(test)))
+head(res)
+```
 
-# How many files identified as rain/non-rain?
-# table(resBR)
+How many files identified as rain/non-rain?
+```{r}
+table(res[c("ID", "value", "threshold")])
 ```
 
 
