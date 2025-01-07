@@ -1,9 +1,8 @@
 ---
 title: "Rain classification example"
-author: "C Devenish & O Metcalfe"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{rain_classification_example}
+  %\VignetteIndexEntry{Rain classification example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = FALSE
 )
-options(rmarkdown.html_vignette.check_title = FALSE)
+
 ```
 
 ```{r}
