@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ```
 
-This vignette will download an additional data set for training and testing. It will be stored within the root directory of the hardRain package. Run the R chunks to download and use this extra testing data.
+This vignette will download an additional data set for training and testing. It will be stored within the root directory of the hardRain package. Run the R chunks to download and use this extra testing data. The data is hosted on an OSF project: https://osf.io/qpev7/
 
 ```{r setup}
 library(hardRain)
